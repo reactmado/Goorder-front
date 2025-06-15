@@ -177,7 +177,7 @@ const Sidebar_2: React.FC<Sidebar_2Props> = ({
 
   // Determine which data to display (props take priority over fetched data)
   const displayName = propName || userProfile?.businessName || "Loading...";
-  const displayEmail = propEmail || userProfile?.phoneNumber || "Loading..."; // Fallback since API doesn't provide email
+  const displayphoneNumber = propEmail || userProfile?.phoneNumber || "Loading..."; // Fallback since API doesn't provide email
   const displayAvatar = propAvatarUrl || userProfile?.image;
 
   return (
@@ -376,7 +376,7 @@ const Sidebar_2: React.FC<Sidebar_2Props> = ({
               {profileLoading ? "Loading..." : displayName}
             </span>
             <span className="sidebar_2-user-email">
-              {profileError ? "Error loading profile" : displayEmail}
+              {profileError ? "Error loading profile" : displayphoneNumber}
             </span>
           </div>
         </div>

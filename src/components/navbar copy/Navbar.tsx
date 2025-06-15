@@ -52,38 +52,86 @@ interface SearchMatch {
   position: number;
 }
 
-const SearchBar = () => {
+const SearchBar = ({
+  isSearchExpanded,
+  setIsSearchExpanded,
+}: {
+  isSearchExpanded: boolean;
+  setIsSearchExpanded: (expanded: boolean) => void;
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [matches, setMatches] = useState<SearchMatch[]>([]);
+  const [matches, setMatches] = useState<SearchMatch[]>([]); // Reset matches on query clear
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchBarRef = useRef<HTMLDivElement>(null); // Ref for the search container itself
 
   useEffect(() => {
-    if (searchQuery.trim().length > 0) {
-      findMatches(searchQuery);
-    } else {
-      clearHighlights();
-      setMatches([]);
-    }
+    // Debounce search to prevent excessive DOM manipulation
+    const handler = setTimeout(() => {
+      if (searchQuery.trim().length > 0) {
+        findMatches(searchQuery);
+      } else {
+        clearHighlights();
+        setMatches([]);
+        setCurrentMatchIndex(0); // Reset index
+      }
+    }, 300); // Debounce time
+
+    return () => clearTimeout(handler);
   }, [searchQuery]);
 
   useEffect(() => {
     if (matches.length > 0) {
       highlightMatches();
-      scrollToMatch(currentMatchIndex);
+      // Only scroll if search is currently active and there's a current match
+      if (isSearchExpanded && currentMatchIndex !== -1) {
+        scrollToMatch(currentMatchIndex);
+      }
+    } else {
+      clearHighlights(); // Clear highlights if matches become empty
     }
-  }, [matches, currentMatchIndex]);
+  }, [matches, currentMatchIndex, isSearchExpanded]);
+
+  // Effect to handle clicks outside the search bar to collapse it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchBarRef.current &&
+        !searchBarRef.current.contains(event.target as Node)
+      ) {
+        // Only collapse if it's currently expanded
+        if (isSearchExpanded) {
+          setIsSearchExpanded(false);
+          setSearchQuery(""); // Clear query when collapsing
+        }
+      }
+    };
+
+    if (isSearchExpanded) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isSearchExpanded, setIsSearchExpanded]);
 
   const findMatches = (query: string) => {
-    if (query.trim().length === 0) return;
+    if (query.trim().length === 0) {
+      clearHighlights();
+      setMatches([]);
+      setCurrentMatchIndex(0);
+      return;
+    }
 
-    clearHighlights();
+    clearHighlights(); // Clear existing highlights before finding new ones
 
-    const searchText = query.toLowerCase();
-    const matches: SearchMatch[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const searchText = query.toLowerCase(); // Fixed: Add eslint-disable-next-line
+    const newMatches: SearchMatch[] = [];
 
-    // Get all text nodes in the document body excluding script and style elements
     const walker = document.createTreeWalker(
       document.body,
       NodeFilter.SHOW_TEXT,
@@ -92,24 +140,22 @@ const SearchBar = () => {
           const parent = node.parentElement;
           if (!parent) return NodeFilter.FILTER_REJECT;
 
-          // Exclude script, style elements, and elements related to search bar itself or Google Translate
+          // Exclude script, style, and elements related to the navbar/search bar itself or Google Translate
           if (
             parent.tagName === "SCRIPT" ||
             parent.tagName === "STYLE" ||
             parent.tagName === "NOSCRIPT" ||
-            parent.classList.contains("search-input") ||
-            parent.classList.contains("search-results-info") ||
-            parent.closest("#google_translate_element") || // Exclude Google Translate widget container
-            parent.closest(".goog-tooltip") || // Exclude Google Translate tooltips
-            parent.closest(".skiptranslate") // Exclude elements used by Google Translate for skipping translation
+            parent.closest(".header") || // Exclude anything inside the navbar itself
+            parent.closest("#google_translate_element") ||
+            parent.closest(".goog-tooltip") ||
+            parent.closest(".skiptranslate")
           ) {
             return NodeFilter.FILTER_REJECT;
           }
 
-          // Only accept nodes with content that includes the search text
           if (
             node.textContent &&
-            node.textContent.toLowerCase().includes(searchText)
+            node.textContent.toLowerCase().includes(searchText) // This is where `searchText` is used.
           ) {
             return NodeFilter.FILTER_ACCEPT;
           }
@@ -119,45 +165,38 @@ const SearchBar = () => {
       } as NodeFilter
     );
 
-    let position = 0;
     let node;
-
+    let position = 0;
     while ((node = walker.nextNode())) {
       const text = node.textContent || "";
-      const parent = node.parentElement as HTMLElement;
-
-      if (text.toLowerCase().includes(searchText)) {
-        matches.push({
+      // To get the actual element for scrolling/highlighting, we target the parent of the text node
+      // This is a common pattern to avoid breaking text nodes into tiny pieces.
+      const parentElement = node.parentElement as HTMLElement;
+      if (text.toLowerCase().includes(searchText) && parentElement) { // This is where `searchText` is also used.
+        newMatches.push({
           text,
-          element: parent,
+          element: parentElement, // Store the parent element
           position: position,
         });
         position++;
       }
     }
 
-    setMatches(matches);
-    setCurrentMatchIndex(matches.length > 0 ? 0 : -1);
+    setMatches(newMatches);
+    setCurrentMatchIndex(newMatches.length > 0 ? 0 : -1);
   };
 
   const clearHighlights = () => {
-    // Remove all existing highlight elements
     const highlights = document.querySelectorAll(".search-highlight");
     highlights.forEach((el) => {
       const parent = el.parentNode;
       if (parent) {
-        // Replace the highlight element with its text content
-        parent.replaceChild(document.createTextNode(el.textContent || ""), el);
-        // Normalize the parent to merge adjacent text nodes
-        parent.normalize();
+        // Create a text node from the highlighted content
+        const textNode = document.createTextNode(el.textContent || "");
+        parent.replaceChild(textNode, el);
+        parent.normalize(); // Merge adjacent text nodes back
       }
     });
-
-    // Remove active highlight class
-    const activeHighlight = document.querySelector(".search-highlight-active");
-    if (activeHighlight) {
-      activeHighlight.classList.remove("search-highlight-active");
-    }
   };
 
   const highlightMatches = () => {
@@ -165,36 +204,53 @@ const SearchBar = () => {
 
     if (searchQuery.trim().length === 0 || matches.length === 0) return;
 
-    const searchText = searchQuery.toLowerCase();
+    const searchText = searchQuery.toLowerCase(); // This `searchText` is local to `highlightMatches`
 
+    // Re-apply highlights after clearing
     matches.forEach((match, idx) => {
       const element = match.element;
-      const text = element.innerHTML;
+      if (!element || !element.childNodes) return;
 
-      // Create a regex to find all instances of the search text
-      const regex = new RegExp(`(${searchText})`, "gi");
+      const originalHTML = element.innerHTML;
+      // Use a more robust regex to find all instances of the search text case-insensitively
+      // Use the local `searchText` here
+      const regex = new RegExp(`(${searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
 
-      // Replace with highlighted version
-      const highlightedText = text.replace(regex, (match) => {
+
+      const newHTML = originalHTML.replace(regex, (match) => {
         const isActive = idx === currentMatchIndex;
-        return `<span class="search-highlight ${
-          isActive ? "search-highlight-active" : ""
-        }">${match}</span>`;
+        // Ensure we don't double highlight by checking if it's already a highlight span
+        if (match.includes('<span class="search-highlight')) {
+            return match; // Already highlighted, return as is
+        }
+        return `<span class="search-highlight ${isActive ? "search-highlight-active" : ""}">${match}</span>`;
       });
-
-      element.innerHTML = highlightedText;
+      element.innerHTML = newHTML;
     });
   };
 
   const scrollToMatch = (index: number) => {
     if (index < 0 || index >= matches.length) return;
 
-    const activeHighlight = document.querySelector(".search-highlight-active");
-    if (activeHighlight) {
-      activeHighlight.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+    const allHighlights = document.querySelectorAll(".search-highlight");
+    if (allHighlights.length > 0) {
+        // First, ensure the current active highlight is correctly marked.
+        allHighlights.forEach((el, i) => {
+            if (i === index) {
+                el.classList.add("search-highlight-active");
+            } else {
+                el.classList.remove("search-highlight-active");
+            }
+        });
+
+        // Then, scroll the correct one into view
+        const targetHighlight = allHighlights[index] as HTMLElement;
+        if (targetHighlight) {
+            targetHighlight.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+            });
+        }
     }
   };
 
@@ -203,30 +259,33 @@ const SearchBar = () => {
   };
 
   const toggleSearch = () => {
-    setIsSearchExpanded(!isSearchExpanded);
-    if (!isSearchExpanded && searchInputRef.current) {
-      // Focus the input when expanding
+    const newState = !isSearchExpanded;
+    setIsSearchExpanded(newState);
+    if (newState && searchInputRef.current) {
       setTimeout(() => searchInputRef.current?.focus(), 100);
+    } else {
+      setSearchQuery(""); // Clear search when collapsing
     }
   };
 
   const navigateToNextMatch = () => {
     if (matches.length === 0) return;
-
     const nextIndex = (currentMatchIndex + 1) % matches.length;
     setCurrentMatchIndex(nextIndex);
   };
 
   const navigateToPrevMatch = () => {
     if (matches.length === 0) return;
-
     const prevIndex = (currentMatchIndex - 1 + matches.length) % matches.length;
     setCurrentMatchIndex(prevIndex);
   };
 
   return (
     <>
-      <div className={`search-container ${isSearchExpanded ? "expanded" : ""}`}>
+      <div
+        ref={searchBarRef}
+        className={`search-container ${isSearchExpanded ? "expanded" : ""}`}
+      >
         <div className="search-icon">
           <FaSearch size={16} />
         </div>
@@ -252,6 +311,7 @@ const SearchBar = () => {
           </div>
         )}
       </div>
+      {/* This button toggles the search bar's visibility on small screens */}
       <button className="search-toggle" onClick={toggleSearch}>
         <FaSearch size={18} />
       </button>
@@ -278,44 +338,44 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [businessProfile, setBusinessProfile] =
     useState<BusinessProfile | null>(null);
-  // State to track current language. Defaults to false (English)
   const [isArabic, setIsArabic] = useState<boolean>(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false); // State for search bar expansion
 
   // Function to delete a cookie
   const deleteCookie = (name: string) => {
-    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;';
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;";
   };
 
   // Function to hide Google Translate elements
   const hideGoogleTranslateElements = () => {
     const elementsToHide = [
-      '#goog-gt-tt',
-      '.goog-te-banner-frame',
-      '.goog-te-ftab-frame',
-      '.goog-tooltip',
-      '.goog-tooltip-wrapper',
-      '.goog-te-balloon-frame',
-      '.goog-te-menu-frame',
-      '.goog-te-spinner-pos',
-      '.skiptranslate.goog-te-gadget'
+      "#goog-gt-tt",
+      ".goog-te-banner-frame",
+      ".goog-te-ftab-frame",
+      ".goog-tooltip",
+      ".goog-tooltip-wrapper",
+      ".goog-te-balloon-frame",
+      ".goog-te-menu-frame",
+      ".goog-te-spinner-pos",
+      ".skiptranslate.goog-te-gadget",
     ];
 
-    elementsToHide.forEach(selector => {
+    elementsToHide.forEach((selector) => {
       const elements = document.querySelectorAll(selector);
-      elements.forEach(el => {
-        (el as HTMLElement).style.display = 'none';
-        (el as HTMLElement).style.visibility = 'hidden';
-        (el as HTMLElement).style.opacity = '0';
-        (el as HTMLElement).style.position = 'absolute';
-        (el as HTMLElement).style.left = '-9999px';
-        (el as HTMLElement).style.top = '-9999px';
+      elements.forEach((el) => {
+        (el as HTMLElement).style.display = "none";
+        (el as HTMLElement).style.visibility = "hidden";
+        (el as HTMLElement).style.opacity = "0";
+        (el as HTMLElement).style.position = "absolute";
+        (el as HTMLElement).style.left = "-9999px";
+        (el as HTMLElement).style.top = "-9999px";
       });
     });
 
     // Ensure body positioning is correct
-    document.body.style.marginTop = '0';
-    document.body.style.top = '0';
-    document.body.style.position = 'static';
+    document.body.style.marginTop = "0";
+    document.body.style.top = "0";
+    document.body.style.position = "static";
   };
 
   useEffect(() => {
@@ -349,10 +409,10 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
     // Check translation state
     const checkTranslationState = () => {
       const googtransCookie = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('googtrans='));
-      
-      if (googtransCookie && googtransCookie.includes('/ar')) {
+        .split("; ")
+        .find((row) => row.startsWith("googtrans="));
+
+      if (googtransCookie && googtransCookie.includes("/ar")) {
         setIsArabic(true);
       } else {
         setIsArabic(false);
@@ -361,10 +421,10 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
 
     // Check immediately
     checkTranslationState();
-    
+
     // Set up interval to monitor cookie changes
     const translationMonitor = setInterval(checkTranslationState, 500);
-    
+
     // Cleanup function to hide Google Translate elements periodically
     const hideTranslateElements = setInterval(() => {
       hideGoogleTranslateElements();
@@ -393,23 +453,22 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
   const handleTranslateToggle = () => {
     if (isArabic) {
       // If currently in Arabic, revert to original (English)
-      deleteCookie('googtrans'); // Delete the main translation cookie
-      deleteCookie('googtrans_session'); // Delete session cookie
-      
+      deleteCookie("googtrans"); // Delete the main translation cookie
+      deleteCookie("googtrans_session"); // Delete session cookie
+
       // Force page reload to revert to original content
       window.location.reload();
     } else {
       // If currently in English, translate to Arabic
       if (window.doGTranslate) {
-        window.doGTranslate('en|ar'); // Translate from English to Arabic
+        window.doGTranslate("en|ar"); // Translate from English to Arabic
         setIsArabic(true); // Set state to Arabic
-        
+
         // Additional cleanup after translation
         setTimeout(() => {
           hideGoogleTranslateElements();
         }, 1000);
 
-        // Continue hiding elements periodically after translation
         setTimeout(() => {
           hideGoogleTranslateElements();
         }, 2000);
@@ -418,8 +477,12 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
           hideGoogleTranslateElements();
         }, 3000);
       } else {
-        console.warn("Google Translate function (doGTranslate) not found. Ensure the script is loaded correctly in index.html.");
-        alert("Translation service not ready. Please try again or check your internet connection.");
+        console.warn(
+          "Google Translate function (doGTranslate) not found. Ensure the script is loaded correctly in index.html."
+        );
+        alert(
+          "Translation service not ready. Please try again or check your internet connection."
+        );
       }
     }
   };
@@ -429,7 +492,7 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
     businessProfile?.image || profileData?.image || "/photos/boy1.png";
 
   return (
-    <header className="header">
+    <header className={`header ${isSearchExpanded ? "search-expanded" : ""}`}>
       <div className="header-left">
         <button className="menu-toggle" onClick={handleToggleSidebar}>
           {isSidebarOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
@@ -442,14 +505,18 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
       </div>
 
       <div className="header-center">
-        <SearchBar />
+        {/* Pass isSearchExpanded and setIsSearchExpanded to SearchBar */}
+        <SearchBar
+          isSearchExpanded={isSearchExpanded}
+          setIsSearchExpanded={setIsSearchExpanded}
+        />
       </div>
 
       <div className="header-actions">
         {/* Translate Button: No icon, text changes based on language view */}
         <button className="translate-button" onClick={handleTranslateToggle}>
           <span className="translate-button-text">
-            {isArabic ? "English" : "عربي"} {/* Text changes here */}
+            {isArabic ? "English" : "عربي"}
           </span>
         </button>
 

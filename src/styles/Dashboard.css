@@ -33,23 +33,25 @@ body {
   background-color: var(--light-gray);
 }
 
-.dashboard-wrapper {
+.db-dashboard-wrapper {
   display: flex;
   width: 100%;
   min-height: 100vh;
+  padding-top: 64px; /* Space for the fixed navbar */
 }
 
-.main-content {
+.db-main-content {
   flex: 1;
-  margin-left: 204px;
+  margin-left: 4px; /* Adjust based on your sidebar width */
   padding: 32px;
-  min-height: 100vh;
+  min-height: calc(100vh - 64px); /* Full height minus navbar height */
   background-color: var(--light-gray);
+  overflow-y: auto; /* Ensure content scrolls if too long */
 }
 
 /* Loading and Error States */
-.loading-container,
-.error-container {
+.db-loading-container,
+.db-error-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -58,7 +60,7 @@ body {
   text-align: center;
 }
 
-.loading-spinner {
+.db-loading-spinner {
   width: 40px;
   height: 40px;
   border: 4px solid var(--border-color);
@@ -77,13 +79,13 @@ body {
   }
 }
 
-.error-message {
+.db-error-message {
   color: var(--error-color);
   font-size: 16px;
   margin-bottom: 16px;
 }
 
-.retry-btn {
+.db-retry-btn {
   background-color: var(--primary-color);
   color: white;
   border: none;
@@ -94,33 +96,33 @@ body {
   transition: background-color 0.2s;
 }
 
-.retry-btn:hover {
+.db-retry-btn:hover {
   background-color: var(--primary-dark);
 }
 
 /* Dashboard Header */
-.dashboard-header {
+.db-dashboard-header {
   margin-bottom: 32px;
 }
 
-.dashboard-header h1 {
+.db-dashboard-header h1 {
   font-size: 32px;
   font-weight: 700;
   color: var(--dark-text);
   margin-bottom: 8px;
 }
 
-.dashboard-header p {
+.db-dashboard-header p {
   font-size: 16px;
   color: var(--medium-gray);
 }
 
 /* Dashboard Grid */
-.dashboard {
+.db-dashboard {
   width: 100%;
 }
 
-.dashboard-grid {
+.db-dashboard-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 32px;
@@ -128,7 +130,7 @@ body {
 }
 
 /* Total Revenue Section */
-.total-revenue-section {
+.db-total-revenue-section {
   background-color: white;
   border-radius: 16px;
   padding: 32px;
@@ -136,24 +138,24 @@ body {
   transition: box-shadow 0.2s;
 }
 
-.total-revenue-section:hover {
+.db-total-revenue-section:hover {
   box-shadow: var(--card-shadow-hover);
 }
 
-.section-header {
+.db-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
 }
 
-.section-header h2 {
+.db-section-header h2 {
   font-size: 24px;
   font-weight: 600;
   color: var(--dark-text);
 }
 
-.time-filters {
+.db-time-filters {
   display: flex;
   gap: 8px;
   background-color: var(--light-gray);
@@ -161,7 +163,7 @@ body {
   border-radius: 12px;
 }
 
-.filter-btn {
+.db-filter-btn {
   padding: 8px 16px;
   border-radius: 8px;
   border: none;
@@ -173,19 +175,19 @@ body {
   transition: all 0.2s ease;
 }
 
-.filter-btn.active {
+.db-filter-btn.db-active {
   background-color: var(--primary-color);
   color: white;
   box-shadow: 0 2px 4px rgba(187, 65, 208, 0.2);
 }
 
-.filter-btn:hover:not(.active) {
+.db-filter-btn:hover:not(.db-active) {
   background-color: rgba(187, 65, 208, 0.1);
   color: var(--primary-color);
 }
 
 /* Revenue Display */
-.revenue-display {
+.db-revenue-display {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -200,12 +202,12 @@ body {
   border: 1px solid rgba(187, 65, 208, 0.2);
 }
 
-.revenue-value {
+.db-revenue-value {
   display: flex;
   flex-direction: column;
 }
 
-.revenue-amount {
+.db-revenue-amount {
   font-size: 48px;
   font-weight: 700;
   color: var(--dark-text);
@@ -213,13 +215,13 @@ body {
   margin-bottom: 8px;
 }
 
-.revenue-period {
+.db-revenue-period {
   font-size: 16px;
   color: var(--medium-gray);
   font-weight: 500;
 }
 
-.revenue-trend {
+.db-revenue-trend {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -228,26 +230,26 @@ body {
   border-radius: 8px;
 }
 
-.trend-icon {
+.db-trend-icon {
   color: var(--success-color);
   width: 20px;
   height: 20px;
 }
 
-.trend-text {
+.db-trend-text {
   color: var(--success-color);
   font-weight: 500;
   font-size: 14px;
 }
 
-.chart-container {
+.db-chart-container {
   border-radius: 12px;
   padding: 16px;
   background-color: rgba(249, 250, 251, 0.5);
 }
 
 /* Metrics Section */
-.metrics-section {
+.db-metrics-section {
   background-color: white;
   border-radius: 16px;
   padding: 32px;
@@ -255,18 +257,18 @@ body {
   transition: box-shadow 0.2s;
 }
 
-.metrics-section:hover {
+.db-metrics-section:hover {
   box-shadow: var(--card-shadow-hover);
 }
 
-.metrics-section h2 {
+.db-metrics-section h2 {
   font-size: 24px;
   font-weight: 600;
   color: var(--dark-text);
   margin-bottom: 24px;
 }
 
-.metric-card {
+.db-metric-card {
   background-color: white;
   border: 1px solid var(--border-color);
   border-radius: 12px;
@@ -276,13 +278,13 @@ body {
   cursor: pointer;
 }
 
-.metric-card:hover {
+.db-metric-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--card-shadow-hover);
   border-color: var(--primary-color);
 }
 
-.metric-card.featured {
+.db-metric-card.db-featured {
   background: linear-gradient(
     135deg,
     var(--primary-color) 0%,
@@ -292,19 +294,19 @@ body {
   border: none;
 }
 
-.metric-card.featured .metric-label,
-.metric-card.featured .metric-value {
+.db-metric-card.db-featured .db-metric-label,
+.db-metric-card.db-featured .db-metric-value {
   color: white;
 }
 
-.metric-header {
+.db-metric-header {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 16px;
 }
 
-.metric-icon {
+.db-metric-icon {
   width: 48px;
   height: 48px;
   border-radius: 12px;
@@ -314,33 +316,33 @@ body {
   flex-shrink: 0;
 }
 
-.metric-icon.total-revenue {
+.db-metric-icon.db-total-revenue {
   background-color: rgba(255, 255, 255, 0.2);
   color: white;
 }
 
-.metric-icon.orders {
+.db-metric-icon.db-orders {
   background-color: rgba(16, 185, 129, 0.1);
   color: var(--success-color);
 }
 
-.metric-icon.requests {
+.db-metric-icon.db-requests {
   background-color: rgba(245, 158, 11, 0.1);
   color: var(--warning-color);
 }
 
-.metric-icon.users {
+.db-metric-icon.db-users {
   background-color: rgba(187, 65, 208, 0.1);
   color: var(--primary-color);
 }
 
-.metric-label {
+.db-metric-label {
   font-size: 14px;
   color: var(--medium-gray);
   font-weight: 500;
 }
 
-.metric-value {
+.db-metric-value {
   font-size: 32px;
   font-weight: 700;
   color: var(--dark-text);
@@ -348,28 +350,28 @@ body {
   margin-bottom: 8px;
 }
 
-.metric-change {
+.db-metric-change {
   font-size: 14px;
   font-weight: 500;
 }
 
-.metric-change.positive {
+.db-metric-change.db-positive {
   color: var(--success-color);
 }
 
-.metric-change.negative {
+.db-metric-change.db-negative {
   color: var(--error-color);
 }
 
 /* Revenue Breakdown Section */
-.revenue-breakdown-section {
+.db-revenue-breakdown-section {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 32px;
   margin-top: 32px;
 }
 
-.breakdown-chart {
+.db-breakdown-chart {
   background-color: white;
   border-radius: 16px;
   padding: 32px;
@@ -377,33 +379,33 @@ body {
   transition: box-shadow 0.2s;
 }
 
-.breakdown-chart:hover {
+.db-breakdown-chart:hover {
   box-shadow: var(--card-shadow-hover);
 }
 
-.breakdown-chart h3 {
+.db-breakdown-chart h3 {
   font-size: 20px;
   font-weight: 600;
   color: var(--dark-text);
   margin-bottom: 24px;
 }
 
-.revenue-bar {
+.db-revenue-bar {
   transition: all 0.2s ease;
 }
 
-.revenue-bar:hover {
+.db-revenue-bar:hover {
   opacity: 0.8;
 }
 
 /* Summary Cards */
-.summary-cards {
+.db-summary-cards {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-.summary-card {
+.db-summary-card {
   background-color: white;
   border-radius: 16px;
   padding: 24px;
@@ -411,24 +413,24 @@ body {
   transition: box-shadow 0.2s;
 }
 
-.summary-card:hover {
+.db-summary-card:hover {
   box-shadow: var(--card-shadow-hover);
 }
 
-.summary-card h4 {
+.db-summary-card h4 {
   font-size: 18px;
   font-weight: 600;
   color: var(--dark-text);
   margin-bottom: 16px;
 }
 
-.summary-stats {
+.db-summary-stats {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.stat-item {
+.db-stat-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -436,33 +438,33 @@ body {
   border-bottom: 1px solid var(--border-color);
 }
 
-.stat-item:last-child {
+.db-stat-item:last-child {
   border-bottom: none;
 }
 
-.stat-label {
+.db-stat-label {
   font-size: 14px;
   color: var(--medium-gray);
   font-weight: 500;
 }
 
-.stat-value {
+.db-stat-value {
   font-size: 16px;
   font-weight: 600;
   color: var(--dark-text);
 }
 
-.stat-value.positive {
+.db-stat-value.db-positive {
   color: var(--success-color);
 }
 
-.action-buttons {
+.db-action-buttons {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.action-btn {
+.db-action-btn {
   padding: 12px 24px;
   border-radius: 8px;
   border: none;
@@ -472,59 +474,59 @@ body {
   text-align: center;
 }
 
-.action-btn.primary {
+.db-action-btn.db-primary {
   background-color: var(--primary-color);
   color: white;
 }
 
-.action-btn.primary:hover {
+.db-action-btn.db-primary:hover {
   background-color: var(--primary-dark);
   transform: translateY(-1px);
 }
 
-.action-btn.secondary {
+.db-action-btn.db-secondary {
   background-color: var(--light-gray);
   color: var(--dark-text);
   border: 1px solid var(--border-color);
 }
 
-.action-btn.secondary:hover {
+.db-action-btn.db-secondary:hover {
   background-color: var(--border-color);
   transform: translateY(-1px);
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .dashboard-grid {
+  .db-dashboard-grid {
     grid-template-columns: 1fr;
   }
 
-  .revenue-breakdown-section {
+  .db-revenue-breakdown-section {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
-  .main-content {
+  .db-main-content {
     margin-left: 0;
     padding: 16px;
   }
 
-  .dashboard-header h1 {
+  .db-dashboard-header h1 {
     font-size: 24px;
   }
 
-  .revenue-amount {
+  .db-revenue-amount {
     font-size: 32px;
   }
 
-  .revenue-display {
+  .db-revenue-display {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
 
-  .section-header {
+  .db-section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
@@ -543,6 +545,6 @@ body {
   }
 }
 
-.dashboard > * {
+.db-dashboard > * {
   animation: fadeIn 0.6s ease-out;
 }

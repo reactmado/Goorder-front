@@ -1,288 +1,572 @@
-/* Overall page layout: Sidebar on the left, content on the right */
-.add-admin-page {
+/* Add Admin Page Styles */
+/* Remove this line: @import "./ManageBusiness.css"; */
+
+/* Shared Loading States */
+.manage-business-loading,
+.add-admin-loading,
+.privacy-loading {
   display: flex;
-  width: 100%;
-  min-height: 100vh;
-  background-color: #fff;
-  margin-top: 50px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1rem;
 }
 
-/* Main content area to the right of the sidebar */
-.add-admin-content {
-  margin-left: 240px; /* Matches your Sidebar width */
-  flex: 1;
-  padding: 24px;
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #8a5bc6;
 }
 
-/* Header with page title and the purple button */
-.add-admin-header {
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Shared Page Layout */
+.manage-business-page,
+.add-admin-page,
+.privacy-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+}
+
+/* Shared Header Styles */
+.manage-business-header,
+.add-admin-header,
+.privacy-header {
+  background: linear-gradient(135deg, #8a5bc6 0%, #6d4c91 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 32px rgba(138, 91, 198, 0.2);
+}
+
+.header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-icon {
+  width: 3rem;
+  height: 3rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.header-text h1 {
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-text p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0.5rem 0 0 0;
+  font-size: 1rem;
+}
+
+.add-business-btn,
+.add-admin-btn {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all 0.3s ease !important;
+}
+
+.add-business-btn:hover,
+.add-admin-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Shared Notification Styles */
+.notification {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  animation: slideInRight 0.3s ease-out;
+}
+
+.notification.success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.notification.error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.notification-icon {
+  font-size: 1.25rem;
+}
+
+.close-notification {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.5rem;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.close-notification:hover {
+  opacity: 1;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Main Content */
+.add-admin-content {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Admin Grid */
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.admin-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.15);
+}
+
+.admin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.admin-card-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.admin-badge {
+  background: #8b5cf6;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.admin-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.info-icon {
+  font-size: 1rem;
+  color: #8b5cf6;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.edit-btn {
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+  border: 1px solid #d1d5db !important;
+  font-size: 0.875rem !important;
+  padding: 8px 16px !important;
+}
+
+.edit-btn:hover {
+  background: #e5e7eb !important;
+}
+
+.delete-btn {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+  border: 1px solid #fecaca !important;
+  font-size: 0.875rem !important;
+  padding: 8px 16px !important;
+}
+
+.delete-btn:hover {
+  background: #fee2e2 !important;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 12px;
+  border: 2px dashed #e5e7eb;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: #d1d5db;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: #6b7280;
   margin-bottom: 24px;
 }
 
-.add-admin-header h2 {
-  margin: 0;
-  font-size: 24px;
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 0 24px;
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  font-size: 1.5rem;
   font-weight: 600;
+  color: #1f2937;
+  margin: 0;
 }
 
-/* Container for admin cards */
-.admin-cards-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-/* Card containing a single admin’s information */
-.admin-card {
-  border: 1px solid #ddd;
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
   border-radius: 4px;
-  padding: 16px;
-  background-color: #fff;
-  max-width: 435px;
-  flex: 1 1 435px;
 }
 
-/* Each info line inside the card */
-.admin-info-line {
-  margin: 0 0 8px 0;
-  font-size: 16px;
-  color: #000;
+.close-modal:hover {
+  background: #f3f4f6;
+  color: #374151;
 }
 
-/* Container for the Edit/Delete buttons */
-.admin-actions {
+.modal-body {
+  padding: 0 24px 20px 24px;
+}
+
+.modal-body p {
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* Form Styles */
+.admin-form {
+  padding: 0 24px 24px 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.modal-actions {
   display: flex;
-  gap: 16px;
-  margin-top: 16px;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px 24px 24px 24px;
+  border-top: 1px solid #f3f4f6;
 }
 
-/* Gray button style (for Edit/Delete) */
-.gray-button {
-  background-color: #e0e0e0 !important;
-  color: #000 !important;
-  border: 1px solid #ccc !important;
-  border-radius: 4px !important;
-  padding: 6px 12px !important;
-  font-size: 14px !important;
-  cursor: pointer !important;
-  font-weight: 400 !important;
+.cancel-btn {
+  background: #f9fafb !important;
+  color: #374151 !important;
+  border: 1px solid #d1d5db !important;
 }
 
-/* Purple button style with a plus icon */
-.purple-add-button {
-  background-color: #8a5bc6 !important;
-  color: #fff !important;
-  border: none !important;
-  border-radius: 12px !important;
-  padding: 8px 16px !important;
-  font-size: 16px !important;
-  font-weight: 400 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  min-width: 180px;
-  position: relative;
-  text-align: center;
-  text-transform: none;
+.cancel-btn:hover {
+  background: #f3f4f6 !important;
 }
 
-.purple-add-button:hover {
-  background-color: #7b4bb0 !important;
+/* Delete Modal Specific */
+.delete-modal .modal-actions .delete-btn {
+  background: #dc2626 !important;
+  color: white !important;
+  border: 1px solid #dc2626 !important;
 }
 
-.purple-add-button::before {
-  content: "+";
-  font-size: 27px;
-  margin-right: 8px;
-  line-height: 1;
-  display: inline-block;
+.delete-modal .modal-actions .delete-btn:hover {
+  background: #b91c1c !important;
 }
 
-/* ==================== */
-/* RESPONSIVE ADJUSTMENTS */
-/* ==================== */
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .add-admin-content {
+    padding: 32px 16px;
+  }
+
+  .admin-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+}
 
 @media (max-width: 768px) {
   .add-admin-header {
+    padding: 24px 16px;
+  }
+
+  .header-content {
     flex-direction: column;
-    align-items: flex-start;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .header-info {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .header-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+  }
+
+  .header-text h1 {
+    font-size: 1.5rem;
+  }
+
+  .add-admin-content {
+    padding: 24px 12px;
+  }
+
+  .admin-grid {
+    grid-template-columns: 1fr;
     gap: 16px;
   }
-  .admin-card {
-    max-width: 100%;
+
+  .modal-content {
+    width: 95%;
+    margin: 20px;
   }
 }
 
 @media (max-width: 480px) {
-  .add-admin-header h2 {
-    font-size: 20px;
+  .add-admin-header {
+    padding: 20px 12px;
+  }
+
+  .header-text h1 {
+    font-size: 1.25rem;
+  }
+
+  .header-text p {
+    font-size: 0.875rem;
+  }
+
+  .add-admin-content {
+    padding: 20px 8px;
+  }
+
+  .admin-card {
+    padding: 16px;
+  }
+
+  .modal-header,
+  .modal-body,
+  .admin-form,
+  .modal-actions {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }
 
-/* ======================== */
-/* MODAL STYLES BELOW       */
-/* ======================== */
-
-/* Delete Modal Overlay */
-.delete-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(3px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-/* Delete Modal Content */
-.delete-modal-content {
-  position: relative;
-  background-color: #fff;
-  padding: 32px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 450px;
-  text-align: center;
-}
-
-.delete-modal-content h3 {
-  font-size: 20px;
-  margin: 0 0 16px 0;
-}
-
-.delete-modal-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 16px;
-}
-
-.cancel-button {
-  background-color: #fff;
-  color: #000;
-  padding: 10px 20px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.delete-button {
-  background-color: #eb5757;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-/* Modal image at top-right in delete modal */
-.modal-top-right-image {
+/* Accessibility */
+.sr-only {
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 27%;
-  height: auto;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-/* Admin Add/Edit Modal Overlay */
-.admin-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(3px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
 }
 
-/* Admin Add/Edit Modal Content */
-.admin-modal-content {
-  background-color: #fff;
-  padding: 32px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  text-align: left;
-  position: relative;
+@media (prefers-contrast: high) {
+  .admin-card {
+    border-color: #000000;
+  }
+
+  .header-icon {
+    border-color: #ffffff;
+  }
 }
 
-/* Form styles within the modal */
-.admin-form .form-group {
-  margin-bottom: 16px;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
-.admin-form .form-group label {
-  display: block;
-  margin-bottom: 4px;
-  font-weight: 500;
-}
+@media print {
+  .add-admin-page {
+    background: white;
+  }
 
-.admin-form .form-group input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
+  .add-admin-header {
+    background: #f3f4f6;
+    color: black;
+  }
 
-/* Modal actions for form buttons */
-.admin-modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  margin-top: 24px;
-}
-
-/* Save button styling */
-.save-button {
-  background-color: #8a5bc6;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.save-button:hover {
-  background-color: #7b4bb0;
-}
-
-/* ======================== */
-/* BACKGROUND & IMAGE STYLES */
-/* ======================== */
-
-/* Ensure the background container stays fixed at the bottom-right */
-.add-admin-background {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  z-index: 0;
-}
-
-/* Style the image to touch the bottom-right edges */
-.bottom-right-image {
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  max-width: 40%;
-  height: auto;
-  display: block;
-}
-
-.circle.circle1,
-.circle.circle2 {
-  display: none;
+  .add-admin-btn,
+  .admin-actions {
+    display: none;
+  }
 }

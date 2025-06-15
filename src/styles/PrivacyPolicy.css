@@ -1,207 +1,651 @@
-/* PrivacyPolicy.css */
-
-/* --- Keyframe Animations --- */
-/* Animation for a subtle fade-in and upward movement */
-@keyframes fadeInUp {
-  from {
-    opacity: 0; /* Start completely transparent */
-    transform: translateY(20px); /* Start 20px below its final position */
-  }
-  to {
-    opacity: 1; /* End fully opaque */
-    transform: translateY(0); /* End at its original vertical position */
-  }
+/* Terms & Conditions Page Styles */
+.terms-page {
+  min-height: calc(100vh - 64px);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* --- General Page Styling --- */
-body {
-  margin: 0; /* Remove default body margin */
-  padding: 0; /* Remove default body padding */
-  background-color: #f8f8f8; /* Light background color for the entire page */
-  font-family: 'Inter', sans-serif; /* Modern, clean sans-serif font for better readability */
-  color: #333; /* Default text color */
-}
-
-/* Main content area that contains the terms and conditions */
-.main-content {
-  padding-top: 60px; /* Crucial: Pushes content down to prevent overlap with a typical fixed Navbar */
-  padding-bottom: 40px; /* Adds space at the bottom of the content area */
-  min-height: calc(100vh - 60px); /* Ensures the content area takes up at least the remaining viewport height */
-  display: flex; /* Use flexbox to center the terms container horizontally */
-  justify-content: center; /* Centers the content container */
-  align-items: flex-start; /* Aligns content to the top within the main-content area */
-}
-
-/* Styling for the container holding all the terms and conditions text */
-.terms-container {
-  max-width: 800px; /* Limits the maximum width for optimal readability on larger screens */
-  width: 90%; /* Makes the container fluid, taking up 90% of its parent's width */
-  background-color: #fff; /* White background for the content box */
-  padding: 30px; /* Internal spacing within the container */
-  border-radius: 12px; /* Rounded corners for a softer, modern look */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth and visual separation */
-  animation: fadeInUp 0.8s ease-out forwards; /* Applies the fade-in animation on load */
-  line-height: 1.8; /* Improved line height for better readability of paragraph text */
-}
-
-/* Header section containing the back button and the page title */
+/* Header */
 .terms-header {
-  display: flex; /* Uses flexbox for horizontal arrangement of items */
-  align-items: center; /* Vertically aligns items (button and title) in the middle */
-  margin-bottom: 25px; /* Space below the header section */
-  padding-bottom: 15px; /* Internal padding at the bottom of the header */
-  border-bottom: 1px solid #eee; /* A light, subtle separator line */
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #c084fc 100%);
+  padding: 32px 20px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Styling for the back navigation button */
-/* This section controls the appearance and horizontal positioning (margin-right) of the back button independently. */
-.back-button {
-  display: flex; /* Use flexbox for centering the icon */
+.terms-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+}
+
+.terms-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.terms-back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.terms-back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.terms-header-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.terms-header-icon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(0, 0, 0, 0.05); /* Very subtle light border for definition */
-  background-color: #e8f0fe; /* Light blue background for better visibility */
-  color: #2c3e50; /* Darker color for the arrow icon to contrast with light blue */
-  font-size: 20px; /* Base font size for the icon (increased for larger button) */
-  width: 48px; /* Enlarged width for a more prominent button */
-  height: 48px; /* Enlarged height for a more prominent button */
-  border-radius: 50%; /* Makes the button circular */
-  cursor: pointer; /* Indicates it's clickable */
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Smooth transitions for hover effects */
-  margin-left: -32px; /* This creates the gap between the button and the header */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Slightly more prominent shadow */
-  flex-shrink: 0; /* Prevents button from shrinking if space is limited */
-  margin-top: -70px; /* Shift the button slightly upwards */
+  font-size: 1.5rem;
+  color: white;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.back-button:hover {
-  background-color: #d0e4ff; /* Slightly darker blue on hover */
-  transform: translateX(-4px); /* Slight slide effect to the left on hover */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* More pronounced shadow on hover */
+.terms-header-text h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 4px 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.back-button:active {
-  transform: translateX(0); /* Resets the slide effect when clicked */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Resets shadow to a subtle state when active */
+.terms-header-text p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
 }
 
-/* Styling for the actual arrow icon within the button */
-.back-icon {
-  font-size: 24px; /* Specific size for the icon, larger to fit the button */
+/* Main Content */
+.terms-content {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeInUp 0.6s ease-out;
 }
 
-/* Styling for the main page heading (e.g., "Terms & Conditions") */
-/* This section controls the appearance of the header independently. */
-.header1 {
-  font-size: 28px; /* Larger font size for prominence */
-  font-weight: 700; /* Bolder font weight */
-  color: #2c3e50; /* A strong, modern dark blue color */
-  margin: 0; /* Removes default margins to ensure proper alignment with flexbox */
-  line-height: 1.2; /* Tighter line height for headings */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Styling for secondary headings (e.g., "1. Use of Services") */
-.terms-container h2 {
-  font-size: 22px; /* Slightly smaller than the main heading */
-  font-weight: 600; /* Semi-bold font weight */
-  color: #34495e; /* A slightly softer dark blue color */
-  margin-top: 30px; /* Space above each section heading */
-  margin-bottom: 15px; /* Space below each section heading */
-  padding-bottom: 5px; /* Internal padding at the bottom */
-  border-bottom: 1px dashed #eee; /* A light dashed separator line */
+/* Hero Section */
+.terms-hero {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  border: 1px solid #e5e7eb;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Styling for general paragraph text */
-.terms-container p {
-  font-size: 16px;
-  line-height: 1.8; /* Generous line spacing for readability */
-  color: #444; /* Dark gray text color */
-  margin-bottom: 15px; /* Space between paragraphs */
+.terms-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  opacity: 0.05;
+  border-radius: 50%;
+  transform: translate(50%, -50%);
 }
 
-/* Styling for bolded text within paragraphs */
-.terms-container strong {
-  font-weight: 700; /* Makes bold text stand out clearly */
-  color: #333; /* Ensures bold text is a strong dark color */
+.hero-icon {
+  font-size: 4rem;
+  color: #8b5cf6;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
-/* Styling for unordered lists */
-.terms-container ul {
-  list-style-type: disc; /* Uses traditional disc bullets */
-  padding-left: 25px; /* Indents the list items */
-  margin-bottom: 20px; /* Space below the entire list */
+.hero-content {
+  flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
-/* Styling for individual list items */
-.terms-container li {
-  margin-bottom: 10px; /* Space between individual list items */
-  font-size: 16px;
+.hero-content h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.hero-content p {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.last-updated {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Terms Sections */
+.terms-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.terms-section {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.terms-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.1);
+}
+
+.section-header {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.section-number {
+  background: linear-gradient(135deg, #8b5cf6, #a855f7);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.section-title h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.section-icon {
+  font-size: 1.25rem;
+  color: #8b5cf6;
+  margin-left: auto;
+}
+
+.section-content {
+  padding: 32px;
+}
+
+.section-content > p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+/* Lists */
+.terms-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+
+.terms-section li {
+  padding: 12px 0;
+  color: #6b7280;
+  position: relative;
+  padding-left: 32px;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.terms-section li:last-child {
+  border-bottom: none;
+}
+
+.terms-section li::before {
+  content: "✓";
+  color: #10b981;
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+  font-size: 1.1rem;
+  background: #f0fdf4;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border: 1px solid #bbf7d0;
+}
+
+.terms-section li:hover {
+  color: #1f2937;
+  background: #f8fafc;
+  margin: 0 -16px;
+  padding: 12px 16px 12px 48px;
+  border-radius: 8px;
+}
+
+/* Important Notice Boxes */
+.important-notice {
+  border-radius: 12px;
+  padding: 20px;
+  margin: 24px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  border: 1px solid;
+}
+
+.important-notice.warning {
+  background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+  border-color: #fbbf24;
+}
+
+.important-notice.info {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  border-color: #60a5fa;
+}
+
+.notice-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.important-notice.warning .notice-icon {
+  color: #d97706;
+}
+
+.important-notice.info .notice-icon {
+  color: #2563eb;
+}
+
+.notice-content p {
+  margin: 0;
+  font-size: 0.875rem;
   line-height: 1.6;
-  color: #555; /* Slightly lighter text color for list items */
 }
 
-/* --- Responsive Adjustments --- */
+.important-notice.warning .notice-content p {
+  color: #92400e;
+}
 
-/* Styles for screens up to 768px wide (e.g., tablets) */
+.important-notice.info .notice-content p {
+  color: #1e40af;
+}
+
+.notice-content strong {
+  font-weight: 700;
+}
+
+/* Contact Section */
+.contact-section {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  padding: 32px;
+  margin-top: 32px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.contact-section h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.contact-section > p {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.contact-item:hover {
+  background: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.1);
+}
+
+.contact-icon {
+  font-size: 1.5rem;
+  color: #8b5cf6;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.contact-content h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.contact-content p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0 0 8px 0;
+}
+
+.contact-note {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+/* Footer */
+.terms-footer {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  padding: 40px;
+  margin-top: 48px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.footer-content {
+  text-align: center;
+}
+
+.footer-main h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.footer-main p {
+  font-size: 1rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.footer-meta {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.footer-item {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.footer-item strong {
+  color: #1f2937;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .terms-content {
+    padding: 32px 16px;
+  }
+
+  .terms-hero {
+    padding: 32px 24px;
+  }
+
+  .section-header {
+    padding: 20px 24px;
+  }
+
+  .section-content {
+    padding: 24px;
+  }
+}
+
 @media (max-width: 768px) {
-  .main-content {
-    padding-top: 55px; /* Adjust padding for potentially smaller Navbars on tablets */
-    padding-left: 15px; /* Add horizontal padding to the main content area */
-    padding-right: 15px;
+  .terms-header {
+    padding: 24px 16px;
   }
 
-  .terms-container {
-    padding: 20px; /* Reduce internal padding for smaller screens */
-    width: 95%; /* Allow the container to take up more width */
+  .terms-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
   }
 
-  .back-button {
-    width: 44px; /* Slightly reduce button size for tablets */
-    height: 44px;
-    font-size: 18px; /* Adjust icon size */
-    margin-top: -3px; /* Adjust for tablet screens */
+  .terms-back-button {
+    align-self: flex-start;
   }
 
-  .back-icon {
-    font-size: 22px;
+  .terms-header-info {
+    gap: 12px;
   }
 
-  .header1 {
-    font-size: 24px; /* Adjust main heading size for mobile readability */
+  .terms-header-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
   }
 
-  .terms-container h2 {
-    font-size: 20px; /* Adjust subheading size */
+  .terms-header-text h1 {
+    font-size: 1.5rem;
   }
 
-  .terms-container p,
-  .terms-container li {
-    font-size: 15px; /* Slightly smaller text for better mobile fit */
+  .terms-content {
+    padding: 24px 12px;
+  }
+
+  .terms-hero {
+    padding: 24px 16px;
+    flex-direction: column;
+    text-align: center;
+    gap: 24px;
+  }
+
+  .hero-icon {
+    font-size: 3rem;
+  }
+
+  .section-header {
+    padding: 16px 20px;
+  }
+
+  .section-content {
+    padding: 20px;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .footer-meta {
+    flex-direction: column;
+    gap: 8px;
   }
 }
 
-/* Styles for screens up to 480px wide (e.g., smartphones) */
 @media (max-width: 480px) {
-  .main-content {
-    padding-top: 50px; /* Further adjust padding for very small screens */
+  .terms-header {
+    padding: 20px 12px;
   }
-  .terms-container {
-    padding: 15px; /* Further reduce internal padding */
+
+  .terms-header-text h1 {
+    font-size: 1.25rem;
   }
-  .back-button {
-    width: 40px; /* Further reduce button size for smartphones */
-    height: 40px;
-    font-size: 16px; /* Adjust icon size */
-    margin-right: 15px; /* Reduce gap slightly */
-    margin-top: -2px; /* Adjust for smartphone screens */
+
+  .terms-header-text p {
+    font-size: 0.875rem;
   }
-  .back-icon {
-    font-size: 20px;
+
+  .terms-content {
+    padding: 20px 8px;
   }
-  .header1 {
-    font-size: 22px; /* Smallest heading size for compact displays */
+
+  .terms-hero {
+    padding: 20px 12px;
   }
-  .terms-container h2 {
-    font-size: 18px; /* Smallest subheading size */
+
+  .section-header {
+    padding: 12px 16px;
+  }
+
+  .section-content {
+    padding: 16px;
+  }
+
+  .contact-item {
+    padding: 16px;
+  }
+
+  .terms-footer {
+    padding: 24px 16px;
+  }
+}
+
+/* Accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .terms-section {
+    border-color: #000000;
+  }
+
+  .section-number {
+    background: #000000;
+  }
+
+  .terms-back-button {
+    border-color: #ffffff;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .terms-page {
+    background: white;
+  }
+
+  .terms-header {
+    background: #f3f4f6;
+    color: black;
+  }
+
+  .terms-back-button {
+    display: none;
   }
 }

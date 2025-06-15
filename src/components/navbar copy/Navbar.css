@@ -1,3 +1,4 @@
+/* Base Navbar Styles */
 .header {
   position: fixed;
   top: 0;
@@ -9,554 +10,23 @@
   border-bottom: 1px solid #e2e2e2;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between; /* Ensures left, center, right are spread */
   z-index: 1000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-family: "Arial", sans-serif;
+  gap: 16px; /* Default gap between major sections */
 }
 
-/* * Styles to Hide Google Translate Pop-up/Toolbar and related elements.
- * IMPORTANT: These selectors target elements that Google Translate *might* inject
- * into your main page's DOM. They CANNOT hide the actual Google Translate toolbar
- * if it's rendered inside an iframe, which is typical.
- */
-body > .skiptranslate.goog-te-gadget {
-  display: none !important;
-}
-body > .goog-tooltip-wrapper {
-  display: none !important;
-}
-.goog-tooltip {
-  display: none !important;
-}
-.goog-text-highlight {
-  background-color: transparent !important;
-  box-shadow: none !important;
-}
-/* These specifically target the top banner/toolbar that Google Translate injects.
- * If these don't work, it's because the toolbar is inside an iframe, which you
- * cannot control with CSS from your main document due to security policies. */
-#goog-gt-vt {
-    display: none !important;
-}
-.goog-te-banner-frame.skiptranslate {
-    display: none !important;
-}
-.VIpgJd-yAWLgf { /* Another common class for the main widget container */
-    display: none !important;
-}
-/* Hide the default language selection dropdown that Google places if it appears */
-.goog-te-combo {
-    display: none !important;
-}
-
-
-.header-left {
-  display: flex;
-  align-items: center;
-}
-
-.header-center {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  max-width: 800px;
-}
-
-.page-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  margin-right: 20px;
-  white-space: nowrap;
-}
-
-.menu-toggle {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  cursor: pointer;
-  color: #495057;
-  padding: 10px 12px;
-  display: none; /* Hidden by default, shown on mobile */
-  margin-right: 12px;
-  transition: all 0.2s ease;
-  min-width: 44px;
-  min-height: 44px;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.menu-toggle:hover {
-  background: #e9ecef;
-  border-color: #ced4da;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-}
-
-.menu-toggle:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.menu-toggle:focus {
-  outline: none;
-  border-color: #8a5bc6;
-  box-shadow: 0 0 0 3px rgba(138, 91, 198, 0.1);
-}
-
-.logo {
-  font-family: "Sriracha", cursive;
-  font-size: 30px;
-  font-weight: 700;
-  font-style: italic;
-  color: #bb41d0;
-  display: flex;
-  align-items: center;
-}
-
-.logo-link {
-  color: inherit;
-  text-decoration: none;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-/* Translate Button Styles */
-.translate-button {
-  background: #6a1b9a; /* A shade of purple */
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 15px;
-  cursor: pointer;
-  display: flex;
-  align-items: center; /* Ensures text is vertically centered */
-  justify-content: center; /* Ensures text is horizontally centered */
-  gap: 8px; /* For spacing, even without an icon */
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.translate-button:hover {
-  background-color: #4a148c; /* Darker purple on hover */
-  transform: translateY(-1px);
-}
-
-.translate-button:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-.translate-button-text {
-  white-space: nowrap; /* Prevents text from wrapping */
-}
-
-.notification-dropdown {
-  position: absolute;
-  top: 60px; /* Below the navbar */
-  right: 0;
-  width: 300px;
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 16px;
-  border-radius: 8px;
-  margin-right: 16px;
-  z-index: 1200;
-}
-
-.notification-item {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-.notification-item:last-child {
-  border-bottom: none;
-}
-
-.notification-bell {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  background: none;
-  border: none;
-}
-
-.notification-bell-icon {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.notification-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: #ff1f1f;
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.search-toggle {
-  display: none; /* Hidden by default, shown on mobile */
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
-  padding: 8px 10px;
-  color: #495057;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  min-width: 40px;
-  min-height: 40px;
-  align-items: center;
-  justify-content: center;
-}
-
-.search-toggle:hover {
-  background: #e9ecef;
-  border-color: #ced4da;
-}
-
-.search-container {
-  position: relative;
-  width: 100%;
-  max-width: 300px;
-  display: flex;
-  align-items: center;
-  background-color: white;
-  border-radius: 50px;
-  padding: 8px 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.search-icon {
-  margin-right: 8px;
-  display: flex;
-  align-items: center;
-  color: #71717a;
-}
-
-.search-input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
-  font-size: 16px;
-  color: #333;
-}
-
-.search-input::placeholder {
-  color: #71717a;
-}
-
-/* New search highlight styles */
-.search-result-highlight {
-  background-color: #ffeb3b;
-  padding: 1px 0;
-  border-radius: 2px;
-}
-
-.search-result-current {
-  background-color: #ff9800;
-  color: #fff;
-}
-
-.search-results-counter {
-  margin: 0 8px;
-  font-size: 14px;
-  color: #666;
-  white-space: nowrap;
-}
-
-.search-navigation {
-  display: flex;
-  gap: 4px;
-}
-
-.search-nav-button {
-  background: none;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  color: #666;
-}
-
-.search-nav-button:hover {
-  background-color: #f5f5f5;
-  color: #333;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.user-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Search highlight and results styles */
-.search-highlight {
-  background-color: #ffeb3b;
-  padding: 1px 0;
-  border-radius: 2px;
-}
-
-.search-highlight-active {
-  background-color: #ff9800;
-  color: #000;
-}
-
-.search-results-info {
-  display: flex;
-  align-items: center;
-  margin-left: 8px;
-  font-size: 12px;
-  color: #555;
-}
-
-/* Main Layout */
-.main-container { /* This is the top-level container in your App.tsx, not the one in layout.tsx */
-  display: flex;
-  min-height: 100vh;
-  /* padding-top is not needed here as content-area handles it */
-}
-
-/* This .main-content is the flex container within layout.tsx
-   It holds Sidebar_2 and the content-area. */
-.main-content {
-  flex: 1; /* Allows it to take remaining horizontal space */
-  display: flex; /* Makes its children (Sidebar_2 and content-area) flex items */
-  width: 100%; /* Ensures it takes full width of its parent */
-  padding: 0; /* No padding or margin on this flex container itself */
-  margin: 0;
-  transition: margin-left 0.3s ease; /* Keep for potential sidebar collapse animation */
-}
-
-/* Fixed sidebar style (Sidebar_2 component) */
-.sidebar {
-  position: fixed;
-  top: 60px; /* Below the navbar */
-  left: 0;
-  width: 240px; /* Explicit Sidebar Width */
-  height: calc(100vh - 60px); /* Fill remaining height */
-  background-color: #eff0f4;
-  border-right: 1px solid #e2e2e2;
-  z-index: 900;
-  overflow-y: auto;
-  transition: transform 0.3s ease;
-}
-
-.sidebar.mobile-open {
-  transform: translateX(0);
-}
-
-.sidebar.mobile-closed {
-  transform: translateX(-100%);
-}
-
-/* RESPONSIVE STYLES for Navbar and Sidebar behavior */
-
-/* Desktop view: Sidebar remains visible (default), no special margins on main-content here */
-@media (min-width: 1024px) {
-  .sidebar {
-    transform: translateX(0) !important; /* Ensure sidebar is visible on desktop */
-  }
-}
-
-/* Tablets and Mobile Phones: Sidebar is likely hidden or an overlay.
-   main-content needs no left margin from sidebar. */
-@media (max-width: 1023px) {
-  .main-content {
-    margin-left: 0; /* Remove fixed sidebar push for smaller screens */
-  }
-  .menu-toggle {
-    display: flex; /* Show menu toggle button */
-  }
-}
-
-/* Large Desktops (1200px+) */
-@media (min-width: 1200px) {
-  .header {
-    padding: 0 24px;
-  }
-
-  .search-container {
-    max-width: 500px;
-  }
-}
-
-/* Tablets (768px to 1023px) */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .header-center {
-    max-width: 300px;
-  }
-
-  .translate-button .translate-button-text {
-    display: none; /* Hide text on smaller tablets to save space */
-  }
-}
-
-/* Small Tablets (577px to 767px) */
-@media (min-width: 577px) and (max-width: 767px) {
-  .logo {
-    font-size: 24px;
-  }
-
-  .search-container {
-    max-width: 220px;
-  }
-
-  .search-navigation {
-    margin-left: auto;
-  }
-
-  .search-results-counter {
-    display: none;
-  }
-
-  .header-center {
-    justify-content: flex-end;
-    padding-right: 8px;
-  }
-
-  .header {
-    background-color: #eff0f4;
-    border-bottom: 1px solid #e2e2e2;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .translate-button .translate-button-text {
-    display: none; /* Hide text on small tablets */
-  }
-}
-
-/* Mobile Phones (up to 576px) */
-@media (max-width: 576px) {
-  .header {
-    height: 56px; /* Slightly shorter for mobile */
-    padding: 0 12px;
-    background-color: #eff0f4;
-    border-bottom: 1px solid #e2e2e2;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-family: "Arial", sans-serif;
-  }
-
-  .menu-toggle {
-    padding: 8px 10px;
-    margin-right: 8px;
-    min-width: 40px;
-    min-height: 40px;
-    background: #f8f9fa;
-    color: #495057;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-  }
-
-  .menu-toggle:hover {
-    background: #e9ecef;
-    border-color: #ced4da;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-  }
-
-  .menu-toggle:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-
-  .menu-toggle:focus {
-    outline: none;
-    border-color: #8a5bc6;
-    box-shadow: 0 0 0 3px rgba(138, 91, 198, 0.1);
-  }
-
-  .logo {
-    font-size: 20px;
-  }
-
-  .page-title {
-    display: none;
-  }
-
-  .search-container {
-    display: none;
-  }
-
-  .search-container.expanded {
-    display: flex;
-    position: absolute;
-    top: 56px; /* Adjust top for new mobile navbar height */
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: none;
-    border-radius: 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1300;
-  }
-
-  .search-results-counter {
-    margin-left: auto;
-    margin-right: 8px;
-  }
-
-  .search-toggle {
-    display: flex;
-  }
-
-  .notification-dropdown {
-    width: 100%;
-    max-width: none;
-    left: 0;
-    right: 0;
-    margin: 0;
-    box-sizing: border-box;
-    top: 56px; /* Adjust top for new mobile navbar height */
-  }
-
-  .translate-button {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-  .translate-button .translate-button-text {
-    display: none;
-  }
-}
-/* Google Translate specific overrides */
+/* Styles to Hide Google Translate Pop-up/Toolbar */
+/* KEEP ALL EXISTING GOOGLE TRANSLATE HIDING STYLES HERE */
+body > .skiptranslate.goog-te-gadget,
+body > .goog-tooltip-wrapper,
+.goog-tooltip,
+.goog-text-highlight,
+#goog-gt-vt,
+.goog-te-banner-frame.skiptranslate,
+.VIpgJd-yAWLgf,
+.goog-te-combo,
 #google_translate_element,
 .goog-te-gadget,
 .goog-te-gadget-simple,
@@ -637,4 +107,647 @@ body[style*="margin-top"] {
 
 body[style*="top"] {
   top: 0 !important;
+}
+
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Gap between menu toggle and logo */
+}
+
+.header-center {
+  flex: 1; /* Allows it to take available space */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center search bar initially */
+  /* Remove max-width here, let .search-container handle it */
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  display: none; /* Hidden by default, only for specific use cases if needed */
+}
+
+.menu-toggle {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #495057;
+  padding: 10px 12px;
+  display: flex; /* Always show on screens where it's relevant */
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 44px; /* Ensure sufficient touch target */
+  min-height: 44px;
+}
+
+.menu-toggle:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.menu-toggle:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.menu-toggle:focus {
+  outline: none;
+  border-color: #8a5bc6;
+  box-shadow: 0 0 0 3px rgba(138, 91, 198, 0.1);
+}
+
+.logo {
+  font-family: "Sriracha", cursive;
+  font-size: 30px;
+  font-weight: 700;
+  font-style: italic;
+  color: #bb41d0;
+  display: flex;
+  align-items: center;
+  white-space: nowrap; /* Prevent logo from wrapping */
+}
+
+.logo-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Consistent gap for action icons */
+}
+
+/* Translate Button Styles */
+.translate-button {
+  background: #6a1b9a; /* A shade of purple */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px; /* Increased padding */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 16px; /* Increased font size */
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  white-space: nowrap; /* Ensure text stays on one line */
+  min-width: 80px; /* Ensure a minimum width */
+}
+
+.translate-button:hover {
+  background-color: #4a148c; /* Darker purple on hover */
+  transform: translateY(-1px);
+}
+
+.translate-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+
+
+.notification-dropdown {
+  position: absolute;
+  top: 60px; /* Below the navbar */
+  right: 0;
+  width: 300px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  border-radius: 8px;
+  margin-right: 16px;
+  z-index: 1200;
+}
+
+.notification-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-bell {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: none;
+  border: none;
+}
+
+.notification-bell-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff1f1f;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Search Bar Specific Styles */
+.search-toggle {
+  display: none; /* Hidden by default, shown only on mobile */
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 40px;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-toggle:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+}
+
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 250px; /* MINIMIZED DEFAULT WIDTH */
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 50px;
+  padding: 8px 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: all 0.3s ease;
+  box-sizing: border-box; /* Crucial for predictable sizing */
+  border: 1px solid transparent; /* Ensure no double border visual */
+}
+
+.search-container:focus-within {
+    border-color: #bb41d0; /* Highlight border on focus for clarity */
+    box-shadow: 0 0 0 3px rgba(187, 65, 208, 0.2); /* Enhanced shadow on focus */
+}
+
+
+.search-icon {
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  color: #71717a;
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 16px;
+  color: #333;
+  min-width: 0; /* Allow input to shrink */
+  padding: 0; /* Ensure no extra padding on input itself */
+}
+
+.search-input::placeholder {
+  color: #71717a;
+}
+
+.search-results-info {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  font-size: 12px;
+  color: #555;
+  white-space: nowrap;
+  gap: 4px; /* Gap between counter and buttons */
+  flex-shrink: 0; /* Prevent from shrinking */
+}
+
+.search-nav-button {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  color: #666;
+}
+
+.search-nav-button:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* New search highlight styles */
+.search-highlight {
+  background-color: #ffeb3b;
+  padding: 1px 0;
+  border-radius: 2px;
+}
+
+.search-highlight-active {
+  background-color: #ff9800;
+  color: #000;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Main Layout (from your existing code) */
+.main-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 240px;
+  height: calc(100vh - 60px);
+  background-color: #eff0f4;
+  border-right: 1px solid #e2e2e2;
+  z-index: 900;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+}
+
+.sidebar.mobile-open {
+  transform: translateX(0);
+}
+
+.sidebar.mobile-closed {
+  transform: translateX(-100%);
+}
+
+/* RESPONSIVE STYLES for Navbar and Sidebar behavior */
+
+/* Desktop View (default for >= 1024px) */
+@media (min-width: 1024px) {
+  .menu-toggle {
+    display: none; /* Hide menu toggle on desktop */
+  }
+
+  .sidebar {
+    transform: translateX(0) !important; /* Ensure sidebar is visible */
+  }
+
+  /* Push content area to the right when sidebar is open */
+  .main-container .main-content {
+    margin-left: 240px; /* Adjust for fixed sidebar width */
+  }
+
+  .search-toggle {
+    display: none; /* Hide search toggle on desktop */
+  }
+}
+
+/* Tablets (768px to 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .header {
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .menu-toggle {
+    display: flex; /* Show menu toggle */
+  }
+
+  .logo {
+    font-size: 26px; /* Slightly smaller logo */
+  }
+
+  .header-center {
+    justify-content: flex-start; /* Align search to left in center section */
+    padding: 0; /* Remove padding */
+    max-width: 300px; /* Give some more space to center */
+  }
+
+  .search-container {
+    max-width: 200px; /* MINIMIZE SEARCH BAR WIDTH FURTHER ON TABLETS */
+    padding: 6px 12px;
+  }
+
+  .search-input {
+    font-size: 15px;
+  }
+
+  .translate-button {
+    padding: 10px 15px; /* MAINTAIN VISIBLE SIZE */
+    font-size: 15px; /* Larger font */
+    min-width: 70px;
+  }
+
+  .translate-button-text {
+    display: inline; /* ENSURE TEXT IS VISIBLE ON TABLETS */
+  }
+
+  .search-toggle {
+    display: none; /* Still hidden on tablets, search bar is visible */
+  }
+}
+
+/* Small Tablets / Large Mobile (577px to 767px) */
+@media (min-width: 577px) and (max-width: 767px) {
+  .header {
+    height: 56px;
+    padding: 0 12px;
+    gap: 10px;
+  }
+
+  .menu-toggle {
+    padding: 8px 10px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .logo {
+    font-size: 22px;
+  }
+
+  .header-center {
+    /* Hide the search container by default, show search toggle */
+    display: none;
+  }
+
+  .header-actions {
+    gap: 12px;
+  }
+
+  .translate-button {
+    padding: 8px 12px; /* MAINTAIN VISIBLE SIZE */
+    font-size: 14px; /* Larger font */
+    min-width: 60px;
+  }
+
+  .translate-button-text {
+    display: inline; /* ENSURE TEXT IS VISIBLE ON SMALL TABLETS */
+  }
+
+  .search-toggle {
+    display: flex; /* Show search toggle button */
+  }
+
+  /* When search is expanded, make it full width */
+  .header.search-expanded .search-toggle {
+    display: none; /* Hide toggle when search is expanded */
+  }
+
+  .header.search-expanded .header-center {
+    display: flex; /* Show search container */
+    position: absolute;
+    top: 56px; /* Below navbar */
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    background-color: #eff0f4; /* Match navbar background */
+    padding: 8px 12px; /* Add padding */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  .header.search-expanded .search-container {
+    border-radius: 8px; /* Square off corners for full-width */
+    box-shadow: none; /* Remove inner shadow */
+    max-width: none; /* Allow it to expand fully */
+  }
+
+  /* Hide other actions when search is expanded */
+  .header.search-expanded .header-actions .translate-button,
+  .header.search-expanded .header-actions .notification-bell,
+  .header.search-expanded .header-actions .profile-link {
+    display: none;
+  }
+
+  /* Ensure the notification dropdown opens correctly when search is NOT expanded */
+  .notification-dropdown {
+    width: auto; /* Auto width */
+    left: 12px; /* From left edge */
+    right: 12px; /* To right edge */
+    margin: 0;
+    box-sizing: border-box;
+    top: 56px; /* Below navbar */
+  }
+}
+
+/* Mobile Phones (up to 576px) */
+@media (max-width: 576px) {
+  .header {
+    height: 56px;
+    padding: 0 12px;
+    gap: 8px; /* Even smaller gap */
+  }
+
+  .menu-toggle {
+    padding: 8px;
+    min-width: 38px;
+    min-height: 38px;
+  }
+
+  .logo {
+    font-size: 18px; /* Smaller logo */
+  }
+
+  .header-center {
+    display: none; /* Hide search container by default */
+  }
+
+  .header-actions {
+    gap: 8px; /* Smaller gap */
+  }
+
+  .translate-button {
+    padding: 6px 10px; /* Smaller, but still visible */
+    font-size: 13px; /* Ensure readability */
+    min-width: 50px;
+  }
+  .translate-button-text {
+    display: inline; /* ENSURE TEXT IS VISIBLE ON MOBILE */
+  }
+
+  .notification-bell,
+  .profile-link {
+    padding: 6px; /* Adjust padding for icons */
+  }
+
+  .search-toggle {
+    display: flex; /* Show search toggle button */
+    min-width: 38px;
+    min-height: 38px;
+    padding: 6px;
+  }
+
+  /* When search is expanded, make it full width */
+  .header.search-expanded .search-toggle {
+    display: none; /* Hide toggle when search is expanded */
+  }
+
+  .header.search-expanded .header-center {
+    display: flex; /* Show search container */
+    position: absolute;
+    top: 56px; /* Below navbar */
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: none;
+    background-color: #eff0f4; /* Match navbar background */
+    padding: 8px 12px; /* Add padding */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  .header.search-expanded .search-container {
+    border-radius: 8px; /* Square off corners for full-width */
+    box-shadow: none; /* Remove inner shadow */
+    max-width: none; /* Allow it to expand fully */
+  }
+
+  /* Hide other actions when search is expanded */
+  .header.search-expanded .header-actions .translate-button,
+  .header.search-expanded .header-actions .notification-bell,
+  .header.search-expanded .header-actions .profile-link {
+    display: none;
+  }
+
+  /* Ensure the notification dropdown opens correctly when search is NOT expanded */
+  .notification-dropdown {
+    width: auto; /* Auto width */
+    left: 12px; /* From left edge */
+    right: 12px; /* To right edge */
+    margin: 0;
+    box-sizing: border-box;
+    top: 56px; /* Below navbar */
+  }
+}
+
+/* Accessibility and other styles */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #8b5cf6;
+  outline-offset: 2px;
+}
+
+@media (prefers-contrast: high) {
+  .header {
+    border-color: #000000;
+    background-color: #ffffff;
+  }
+  .menu-toggle,
+  .search-toggle {
+    background-color: #000000;
+    color: #ffffff;
+    border-color: #ffffff;
+  }
+  .logo {
+    color: #000000;
+  }
+  .translate-button {
+    background-color: #000000;
+    color: #ffffff;
+  }
+  .search-container {
+    border-color: #000000;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .header {
+    background: #f3f4f6;
+    color: black;
+    box-shadow: none;
+    border-bottom: 1px solid #ddd;
+  }
+  .menu-toggle,
+  .search-toggle,
+  .notification-bell,
+  .translate-button,
+  .user-avatar {
+    display: none !important;
+  }
+  .header-center {
+    display: flex !important; /* Ensure search bar is visible for print */
+    justify-content: center !important;
+    flex: 1 !important;
+  }
+  .search-container {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+  .notification-dropdown {
+    display: none !important;
+  }
 }

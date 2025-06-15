@@ -87,11 +87,11 @@ const Dashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="dashboard-wrapper">
+      <div className="db-dashboard-wrapper">
         <Navbar />
-        <div className="main-content">
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
+        <div className="db-main-content">
+          <div className="db-loading-container">
+            <div className="db-loading-spinner"></div>
             <p>Loading dashboard data...</p>
           </div>
         </div>
@@ -101,14 +101,14 @@ const Dashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="dashboard-wrapper">
+      <div className="db-dashboard-wrapper">
         <Navbar />
-        <div className="main-content">
-          <div className="error-container">
-            <p className="error-message">{error}</p>
+        <div className="db-main-content">
+          <div className="db-error-container">
+            <p className="db-error-message">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="retry-btn"
+              className="db-retry-btn"
             >
               Retry
             </button>
@@ -119,26 +119,26 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="dashboard-wrapper">
+    <div className="db-dashboard-wrapper">
       <Navbar />
-      <div className="main-content">
-        <div className="dashboard">
-          <div className="dashboard-header">
+      <div className="db-main-content">
+        <div className="db-dashboard">
+          <div className="db-dashboard-header">
             <h1>Dashboard Overview</h1>
             <p>Monitor your business performance and analytics</p>
           </div>
 
-          <div className="dashboard-grid">
+          <div className="db-dashboard-grid">
             {/* Total Revenue Section */}
-            <div className="total-revenue-section">
-              <div className="section-header">
+            <div className="db-total-revenue-section">
+              <div className="db-section-header">
                 <h2>Revenue Analytics</h2>
-                <div className="time-filters">
+                <div className="db-time-filters">
                   {(["Daily", "Monthly", "Yearly"] as const).map((tf) => (
                     <button
                       key={tf}
-                      className={`filter-btn ${
-                        timeFilter === tf ? "active" : ""
+                      className={`db-filter-btn ${
+                        timeFilter === tf ? "db-active" : ""
                       }`}
                       onClick={() => setTimeFilter(tf)}
                     >
@@ -148,18 +148,18 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
 
-              <div className="revenue-display">
-                <div className="revenue-value">
-                  <span className="revenue-amount">{getCurrentRevenue()}</span>
-                  <span className="revenue-period">{timeFilter} Revenue</span>
+              <div className="db-revenue-display">
+                <div className="db-revenue-value">
+                  <span className="db-revenue-amount">{getCurrentRevenue()}</span>
+                  <span className="db-revenue-period">{timeFilter} Revenue</span>
                 </div>
-                <div className="revenue-trend">
-                  <TrendingUp className="trend-icon" />
-                  <span className="trend-text">+12.5% from last period</span>
+                <div className="db-revenue-trend">
+                  <TrendingUp className="db-trend-icon" />
+                  <span className="db-trend-text">+12.5% from last period</span>
                 </div>
               </div>
 
-              <div className="chart-container">
+              <div className="db-chart-container">
                 <ResponsiveContainer width="100%" height={300}>
                   <AreaChart data={getChartData()}>
                     <defs>
@@ -206,64 +206,64 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Key Metrics Section */}
-            <div className="metrics-section">
+            <div className="db-metrics-section">
               <h2>Key Metrics</h2>
 
-              <div className="metric-card featured">
-                <div className="metric-header">
-                  <div className="metric-icon total-revenue">
+              <div className="db-metric-card db-featured">
+                <div className="db-metric-header">
+                  <div className="db-metric-icon db-total-revenue">
                     <TrendingUp size={24} />
                   </div>
-                  <span className="metric-label">Total Revenue</span>
+                  <span className="db-metric-label">Total Revenue</span>
                 </div>
-                <div className="metric-value">
+                <div className="db-metric-value">
                   {dashboardData?.totalRevenue.toLocaleString()} EGP
                 </div>
-                <div className="metric-change positive">+15.3% this month</div>
+                <div className="db-metric-change db-positive">+15.3% this month</div>
               </div>
 
-              <div className="metric-card">
-                <div className="metric-header">
-                  <div className="metric-icon orders">
+              <div className="db-metric-card">
+                <div className="db-metric-header">
+                  <div className="db-metric-icon db-orders">
                     <Grid size={20} />
                   </div>
-                  <span className="metric-label">Total Orders</span>
+                  <span className="db-metric-label">Total Orders</span>
                 </div>
-                <div className="metric-value">
+                <div className="db-metric-value">
                   {dashboardData?.totalOrders.toLocaleString()}
                 </div>
-                <div className="metric-change positive">+8.2%</div>
+                <div className="db-metric-change db-positive">+8.2%</div>
               </div>
 
-              <div className="metric-card">
-                <div className="metric-header">
-                  <div className="metric-icon requests">
+              <div className="db-metric-card">
+                <div className="db-metric-header">
+                  <div className="db-metric-icon db-requests">
                     <MousePointer size={20} />
                   </div>
-                  <span className="metric-label">Order Requests</span>
+                  <span className="db-metric-label">Order Requests</span>
                 </div>
-                <div className="metric-value">
+                <div className="db-metric-value">
                   {dashboardData?.orderRequests.toLocaleString()}
                 </div>
-                <div className="metric-change positive">+12.1%</div>
+                <div className="db-metric-change db-positive">+12.1%</div>
               </div>
 
-              <div className="metric-card">
-                <div className="metric-header">
-                  <div className="metric-icon users">
+              <div className="db-metric-card">
+                <div className="db-metric-header">
+                  <div className="db-metric-icon db-users">
                     <Users size={20} />
                   </div>
-                  <span className="metric-label">Active Users</span>
+                  <span className="db-metric-label">Active Users</span>
                 </div>
-                <div className="metric-value">2.4K</div>
-                <div className="metric-change positive">+5.7%</div>
+                <div className="db-metric-value">2.4K</div>
+                <div className="db-metric-change db-positive">+5.7%</div>
               </div>
             </div>
           </div>
 
           {/* Revenue Breakdown Section */}
-          <div className="revenue-breakdown-section">
-            <div className="breakdown-chart">
+          <div className="db-revenue-breakdown-section">
+            <div className="db-breakdown-chart">
               <h3>Revenue Breakdown</h3>
               <ResponsiveContainer width="100%" height={350}>
                 <BarChart
@@ -284,19 +284,19 @@ const Dashboard: React.FC = () => {
                     dataKey="revenue"
                     fill="#bb41d0"
                     radius={[4, 4, 0, 0]}
-                    className="revenue-bar"
+                    className="db-revenue-bar"
                   />
                 </BarChart>
               </ResponsiveContainer>
             </div>
 
-            <div className="summary-cards">
-              <div className="summary-card">
+            <div className="db-summary-cards">
+              <div className="db-summary-card">
                 <h4>Performance Summary</h4>
-                <div className="summary-stats">
-                  <div className="stat-item">
-                    <span className="stat-label">Average Order Value</span>
-                    <span className="stat-value">
+                <div className="db-summary-stats">
+                  <div className="db-stat-item">
+                    <span className="db-stat-label">Average Order Value</span>
+                    <span className="db-stat-value">
                       {dashboardData?.totalOrders
                         ? Math.round(
                             dashboardData.totalRevenue /
@@ -306,9 +306,9 @@ const Dashboard: React.FC = () => {
                       EGP
                     </span>
                   </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Conversion Rate</span>
-                    <span className="stat-value">
+                  <div className="db-stat-item">
+                    <span className="db-stat-label">Conversion Rate</span>
+                    <span className="db-stat-value">
                       {dashboardData?.orderRequests &&
                       dashboardData?.totalOrders
                         ? Math.round(
@@ -320,19 +320,19 @@ const Dashboard: React.FC = () => {
                       %
                     </span>
                   </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Growth Rate</span>
-                    <span className="stat-value positive">+18.5%</span>
+                  <div className="db-stat-item">
+                    <span className="db-stat-label">Growth Rate</span>
+                    <span className="db-stat-value db-positive">+18.5%</span>
                   </div>
                 </div>
               </div>
 
-              <div className="summary-card">
+              <div className="db-summary-card">
                 <h4>Quick Actions</h4>
-                <div className="action-buttons">
-                  <button className="action-btn primary">View Reports</button>
-                  <button className="action-btn secondary">Export Data</button>
-                  <button className="action-btn secondary">Settings</button>
+                <div className="db-action-buttons">
+                  <button className="db-action-btn db-primary">View Reports</button>
+                  <button className="db-action-btn db-secondary">Export Data</button>
+                  <button className="db-action-btn db-secondary">Settings</button>
                 </div>
               </div>
             </div>

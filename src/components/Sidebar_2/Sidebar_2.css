@@ -372,7 +372,7 @@
 /* User email styling */
 .sidebar_2-user-email {
   font-size: 11px;
-  color: var(--text-light);
+  color: black;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

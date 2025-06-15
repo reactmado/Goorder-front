@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Sidebar_2 from "../../components/Sidebar_2/Sidebar_2";
 import Navbar from "../../components/navbar copy/Navbar";
-import { FaEllipsisV } from "react-icons/fa"; // Import for three dots menu
+import { FaEllipsisV, FaArrowLeft } from "react-icons/fa"; // Import FaArrowLeft for new back button style
 
 import "../../styles/add-product-business_1.css";
 import productService, {
@@ -64,7 +64,6 @@ const EditProductForm: React.FC<EditProductFormProps> = ({
       await onSubmit(product.id, { name, price, stock });
       onClose(); // Close on successful submission
     } catch (err) {
-      // Error handling is managed by parent component's onSubmit prop
       console.error("Submission error:", err);
     }
   };
@@ -73,14 +72,17 @@ const EditProductForm: React.FC<EditProductFormProps> = ({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modal-content new-modal-design"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="modal-header">
           <h2>Edit Product</h2>
           <button type="button" className="close-button" onClick={onClose}>
             &times;
           </button>
         </div>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="modal-form">
           {error && <p className="error-message">{error}</p>}
           <div className="form-group">
             <label htmlFor="edit-name">Product Name</label>
@@ -90,6 +92,7 @@ const EditProductForm: React.FC<EditProductFormProps> = ({
               name="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              placeholder="Enter product name"
               required
               disabled={isLoading}
             />
@@ -105,6 +108,7 @@ const EditProductForm: React.FC<EditProductFormProps> = ({
               onChange={(e) => setPrice(parseFloat(e.target.value))}
               step="0.01"
               min="0"
+              placeholder="0.00"
               required
               disabled={isLoading}
             />
@@ -119,6 +123,7 @@ const EditProductForm: React.FC<EditProductFormProps> = ({
               value={stock}
               onChange={(e) => setStock(parseInt(e.target.value))}
               min="0"
+              placeholder="0"
               required
               disabled={isLoading}
             />
@@ -166,14 +171,17 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modal-content new-modal-design delete-modal"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="modal-header">
           <h2>Confirm Deletion</h2>
           <button type="button" className="close-button" onClick={onClose}>
             &times;
           </button>
         </div>
-        <p>
+        <p className="delete-modal-message">
           Are you sure you want to delete "<strong>{itemName}</strong>"? This
           action cannot be undone.
         </p>
@@ -219,7 +227,7 @@ const AddProductBusiness_1: React.FC = () => {
 
   // New product form state
   const [newProduct, setNewProduct] = useState<NewProduct>({
-    name: "",
+    name: "", // Reset fields for new product
     categoryId: 0,
     price: 0,
     stock: 0,
@@ -248,7 +256,13 @@ const AddProductBusiness_1: React.FC = () => {
   const menuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      // Close menu if click is outside the menu and not on a menu button
+      const target = event.target as HTMLElement;
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(target) &&
+        !target.closest(".menu-button")
+      ) {
         setOpenMenuId(null);
       }
     };
@@ -277,6 +291,7 @@ const AddProductBusiness_1: React.FC = () => {
       setSelectedCategoryName("");
       setProducts([]);
       setSubCategories([]);
+      setOpenMenuId(null); // Close any open menu when changing view
     } catch (err) {
       setError("Failed to fetch categories");
       setLoading(false);
@@ -299,6 +314,8 @@ const AddProductBusiness_1: React.FC = () => {
       const parentCategory = categories.find((cat) => cat.id === parentId);
       const parentName = parentCategory ? parentCategory.name : "";
       setSelectedCategoryName(parentName);
+
+      setOpenMenuId(null); // Close any open menu when changing view
 
       // Check if there are subcategories
       if (subCategoriesData.length > 0) {
@@ -323,6 +340,7 @@ const AddProductBusiness_1: React.FC = () => {
       setProducts(productsData);
       setLoading(false);
       setViewMode("products");
+      setOpenMenuId(null); // Close any open menu when changing view
     } catch (err) {
       setError("Failed to fetch products");
       setLoading(false);
@@ -412,8 +430,12 @@ const AddProductBusiness_1: React.FC = () => {
   // Open add product form
   const openAddProductForm = (id: number) => {
     setNewProduct({
-      ...newProduct,
+      name: "", // Reset fields for new product
       categoryId: id,
+      price: 0,
+      stock: 0,
+      variants: [],
+      images: [],
     });
     setShowAddProductForm(true);
   };
@@ -595,15 +617,15 @@ const AddProductBusiness_1: React.FC = () => {
           <h2 className="categories-heading">
             Products {selectedCategoryName ? `- ${selectedCategoryName}` : ""}
           </h2>
-          <div>
+          <div className="header-actions">
             {viewMode === "products" && selectedSubCategoryId && (
-              <button className="back-button" onClick={backToSubcategories}>
-                Back to Subcategories
+              <button className="back-to-button" onClick={backToSubcategories}>
+                <FaArrowLeft /> Back to Subcategories
               </button>
             )}
             {viewMode === "products" && (
-              <button className="back-button" onClick={backToCategories}>
-                Back to Categories
+              <button className="back-to-button" onClick={backToCategories}>
+                <FaArrowLeft /> Back to Categories
               </button>
             )}
             <button
@@ -665,7 +687,9 @@ const AddProductBusiness_1: React.FC = () => {
               </div>
             ))
           ) : (
-            <p>No products found in this category.</p>
+            <p className="no-items-message">
+              No products found in this category.
+            </p>
           )}
         </div>
       </>
@@ -680,9 +704,9 @@ const AddProductBusiness_1: React.FC = () => {
           <h2 className="categories-heading">
             Subcategories of {selectedCategoryName}
           </h2>
-          <div>
-            <button className="back-button" onClick={backToCategories}>
-              Back to Categories
+          <div className="header-actions">
+            <button className="back-to-button" onClick={backToCategories}>
+              <FaArrowLeft /> Back to Categories
             </button>
             <button
               className="add-product-button"
@@ -716,7 +740,7 @@ const AddProductBusiness_1: React.FC = () => {
               </div>
             ))
           ) : (
-            <p>
+            <p className="no-items-message">
               No subcategories found. You can add a product directly to this
               category.
             </p>
@@ -732,23 +756,31 @@ const AddProductBusiness_1: React.FC = () => {
       <>
         <h2 className="categories-heading">Categories</h2>
         <div className="categories-grid">
-          {categories.map((category) => (
-            <div
-              key={category.id}
-              className="category-card"
-              onClick={() => handleCategoryClick(category.id, category.name)}
-            >
-              <img
-                src={category.image || "/placeholder.png"}
-                alt={category.name}
-                className="category-image"
-              />
-              <p className="category-label">{category.name}</p>
-              {category.subCategories && category.subCategories.length > 0 && (
-                <span className="has-subcategories">Has subcategories</span>
-              )}
-            </div>
-          ))}
+          {categories.length > 0 ? (
+            categories.map((category) => (
+              <div
+                key={category.id}
+                className="category-card"
+                onClick={() => handleCategoryClick(category.id, category.name)}
+              >
+                <img
+                  src={category.image || "/placeholder.png"}
+                  alt={category.name}
+                  className="category-image"
+                />
+                <p className="category-label">{category.name}</p>
+                {category.subCategories &&
+                  category.subCategories.length > 0 && (
+                    <span className="has-subcategories">Has subcategories</span>
+                  )}
+              </div>
+            ))
+          ) : (
+            <p className="no-items-message">
+              No categories found. Click "Add New Category" to create your first
+              one.
+            </p>
+          )}
         </div>
       </>
     );
@@ -757,7 +789,33 @@ const AddProductBusiness_1: React.FC = () => {
   // Render content based on current view mode
   const renderContent = () => {
     if (loading) {
-      return <div className="loading">Loading...</div>;
+      return (
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Loading...</p>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="error-container">
+          <p className="error-message">{error}</p>
+          <button
+            className="retry-button"
+            onClick={
+              viewMode === "categories"
+                ? fetchCategories
+                : () =>
+                    selectedCategoryId
+                      ? fetchSubCategories(selectedCategoryId)
+                      : fetchCategories()
+            }
+          >
+            Retry
+          </button>
+        </div>
+      );
     }
 
     switch (viewMode) {
@@ -799,16 +857,16 @@ const AddProductBusiness_1: React.FC = () => {
             </h1>
           </div>
 
-          {/* Error message */}
-          {error && <div className="error-message">{error}</div>}
-
           {/* Main Content */}
           {renderContent()}
 
           {/* Add Product Form Modal */}
           {showAddProductForm && (
             <div className="modal-overlay">
-              <div className="modal-content">
+              <div
+                className="modal-content new-modal-design"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <div className="modal-header">
                   <h2>Add New Product</h2>
                   <button
@@ -819,7 +877,7 @@ const AddProductBusiness_1: React.FC = () => {
                   </button>
                 </div>
 
-                <form onSubmit={handleSubmitProduct}>
+                <form onSubmit={handleSubmitProduct} className="modal-form">
                   <div className="form-group">
                     <label htmlFor="name">Product Name</label>
                     <input
@@ -828,6 +886,7 @@ const AddProductBusiness_1: React.FC = () => {
                       name="name"
                       value={newProduct.name}
                       onChange={handleInputChange}
+                      placeholder="Enter product name"
                       required
                       disabled={loading}
                     />
@@ -843,6 +902,7 @@ const AddProductBusiness_1: React.FC = () => {
                       onChange={handleInputChange}
                       step="0.01"
                       min="0"
+                      placeholder="0.00"
                       required
                       disabled={loading}
                     />
@@ -857,6 +917,7 @@ const AddProductBusiness_1: React.FC = () => {
                       value={newProduct.stock}
                       onChange={handleInputChange}
                       min="0"
+                      placeholder="0"
                       required
                       disabled={loading}
                     />
@@ -960,6 +1021,7 @@ const AddProductBusiness_1: React.FC = () => {
                             }
                             step="0.01"
                             min="0"
+                            placeholder="0.00"
                             required
                             disabled={loading}
                           />
@@ -981,6 +1043,7 @@ const AddProductBusiness_1: React.FC = () => {
                               )
                             }
                             min="0"
+                            placeholder="0"
                             required
                             disabled={loading}
                           />
@@ -1001,6 +1064,7 @@ const AddProductBusiness_1: React.FC = () => {
                                 e.target.value
                               )
                             }
+                            placeholder="e.g., Red"
                             disabled={loading}
                           />
                         </div>
@@ -1018,6 +1082,7 @@ const AddProductBusiness_1: React.FC = () => {
                                 e.target.value
                               )
                             }
+                            placeholder="e.g., M, Large"
                             disabled={loading}
                           />
                         </div>
@@ -1037,6 +1102,7 @@ const AddProductBusiness_1: React.FC = () => {
                                 e.target.value
                               )
                             }
+                            placeholder="e.g., 100g, 1kg"
                             disabled={loading}
                           />
                         </div>
