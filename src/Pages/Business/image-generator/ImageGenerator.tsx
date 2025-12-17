@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { Copy } from "lucide-react"; // Import the Copy icon
 
 import Nav_2 from "../../../components/navbar copy/Navbar";
-import Sidebar_2 from "../../../components/Sidebar_2/Sidebar_2";
 
 const ImageGenerator: React.FC = () => {
   const navigate = useNavigate();
@@ -117,7 +116,6 @@ const ImageGenerator: React.FC = () => {
   return (
     <div className="ig-main-layout">
       <Nav_2 />
-      <Sidebar_2 />
       <div className={`ig-content-wrapper ${igShowContent ? "ig-show-content" : ""}`}>
 
         <div className="ig-generator-card">

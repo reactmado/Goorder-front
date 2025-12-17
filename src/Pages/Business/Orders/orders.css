@@ -203,13 +203,14 @@ body {
   max-width: 400px;
 }
 
-.search-icon {
+.search-icon2 {
   position: absolute;
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
   pointer-events: none;
+  margin-left: -5px;
 }
 
 .search-input {

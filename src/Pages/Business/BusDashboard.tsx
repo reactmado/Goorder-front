@@ -13,18 +13,12 @@ import {
   ReferenceLine,
 } from "recharts";
 import { FiTrendingUp, FiTrendingDown } from "react-icons/fi";
-import Sidebar_2 from "../../components/Sidebar_2/Sidebar_2";
 import Navbar from "../../components/navbar copy/Navbar";
 import {
   getDashboardData,
   DashboardData,
 } from "../../service/BusDashboard_service";
 
-const dummyUser = {
-  name: "John Doe",
-  email: "john@example.com",
-  avatarUrl: "/images/user.png",
-};
 
 const BusDashboard = () => {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
@@ -101,11 +95,7 @@ const BusDashboard = () => {
   if (loading) {
     return (
       <div className="dashboardContainer">
-        <Sidebar_2
-          name={dummyUser.name}
-          email={dummyUser.email}
-          avatarUrl="/images/avatar.png"
-        />
+       
         <div className="mainContent">
           <Navbar />
           <div className="loadingContainer">
@@ -119,11 +109,7 @@ const BusDashboard = () => {
   if (error) {
     return (
       <div className="dashboardContainer">
-        <Sidebar_2
-          name={dummyUser.name}
-          email={dummyUser.email}
-          avatarUrl="/images/avatar.png"
-        />
+     
         <div className="mainContent">
           <Navbar />
           <div className="errorContainer">
@@ -139,7 +125,6 @@ const BusDashboard = () => {
 
   return (
     <div className="dashboardContainer">
-      <Sidebar_2 />
       <div className="mainContent">
         <Navbar />
 

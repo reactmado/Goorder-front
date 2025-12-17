@@ -428,18 +428,8 @@ const AddProductBusiness_1: React.FC = () => {
   };
 
   // Open add product form
-  const openAddProductForm = (id: number) => {
-    setNewProduct({
-      name: "", // Reset fields for new product
-      categoryId: id,
-      price: 0,
-      stock: 0,
-      variants: [],
-      images: [],
-    });
-    setShowAddProductForm(true);
-  };
-
+ 
+ 
   // Handle input change for the new product form
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -628,14 +618,7 @@ const AddProductBusiness_1: React.FC = () => {
                 <FaArrowLeft /> Back to Categories
               </button>
             )}
-            <button
-              className="add-product-button"
-              onClick={() =>
-                openAddProductForm(selectedSubCategoryId || selectedCategoryId!)
-              }
-            >
-              Add New Product
-            </button>
+         
           </div>
         </div>
 
@@ -708,12 +691,7 @@ const AddProductBusiness_1: React.FC = () => {
             <button className="back-to-button" onClick={backToCategories}>
               <FaArrowLeft /> Back to Categories
             </button>
-            <button
-              className="add-product-button"
-              onClick={() => openAddProductForm(selectedCategoryId!)}
-            >
-              Add Product to Category
-            </button>
+       
           </div>
         </div>
 

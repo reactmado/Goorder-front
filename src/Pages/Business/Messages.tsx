@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import Sidebar_2 from "../../components/Sidebar_2/Sidebar_2";
 import { FaPaperPlane } from "react-icons/fa";
 import "../../styles/Messages.css";
 import Navbar from "../../components/navbar copy/Navbar";
@@ -31,7 +30,6 @@ interface Chat {
     role: string;
     image: string;
   };
-  // Note: API response has typo "messsages" instead of "messages"
   messsages?: Message[];
 }
 
@@ -60,6 +58,7 @@ const Messages: React.FC = () => {
     [chatId: number]: Message[];
   }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatModalRef = useRef<HTMLDivElement>(null); // Ref for modal for outside click
 
   useEffect(() => {
     loadChats();
@@ -75,6 +74,29 @@ const Messages: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Handle clicks outside the chat modal to close it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        chatModalRef.current &&
+        !chatModalRef.current.contains(event.target as Node) &&
+        showChatModal
+      ) {
+        handleCloseModal();
+      }
+    };
+
+    if (showChatModal) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showChatModal]);
 
   const initializeSignalR = async () => {
     try {
@@ -115,8 +137,6 @@ const Messages: React.FC = () => {
         setChatMessagesCache((prev) => {
           const updatedCache = { ...prev };
 
-          // Find which chat this message belongs to
-          // This assumes the message has a chatId or we can determine it from senderId
           Object.keys(updatedCache).forEach((chatIdStr) => {
             const chatId = parseInt(chatIdStr);
             const chat = chats.find((c) => c.id === chatId);
@@ -186,15 +206,20 @@ const Messages: React.FC = () => {
     setLoadingMessages(true);
     setErrorMessage(null);
 
+    // Use cached messages if available
+    if (chatMessagesCache[chat.id]) {
+      setMessages(chatMessagesCache[chat.id]);
+      setLoadingMessages(false);
+      scrollToBottom();
+      return;
+    }
+
     try {
-      // Get chat messages using the chat ID
       const chatResponse = await getChatMessages(chat.id);
 
       let messagesList: Message[] = [];
 
-      // Handle the response structure - match Flutter logic
       if (chatResponse && typeof chatResponse === "object") {
-        // If response has messsages array (note the typo in API)
         if (chatResponse.messsages && Array.isArray(chatResponse.messsages)) {
           messagesList = chatResponse.messsages.map(
             (msg: {
@@ -207,13 +232,11 @@ const Messages: React.FC = () => {
               id: msg.id,
               text: msg.text,
               senderId: msg.senderId,
-              isSender: msg.isSender, // true means business sent it
+              isSender: msg.isSender,
               createdAt: msg.createdAt,
             })
           );
-        }
-        // If response is a single chat object with messages
-        else if (Array.isArray(chatResponse)) {
+        } else if (Array.isArray(chatResponse)) {
           const chatData = chatResponse[0];
           if (chatData && chatData.messsages) {
             messagesList = chatData.messsages.map(
@@ -235,7 +258,6 @@ const Messages: React.FC = () => {
         }
       }
 
-      // Sort messages by timestamp to show oldest first (newest at bottom)
       const sortedMessages = messagesList.sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -270,7 +292,7 @@ const Messages: React.FC = () => {
     const optimisticMessage: Message = {
       id: `temp-${Date.now()}`,
       text: messageText,
-      senderId: "current_business", // Business is sending
+      senderId: "current_business", // Assuming "current_business" is the ID of the business user
       isSender: true, // Business sent this message
       createdAt: new Date().toISOString(),
     };
@@ -282,6 +304,7 @@ const Messages: React.FC = () => {
       ...prev,
       [selectedChat.id]: updatedMessages,
     }));
+    scrollToBottom(); // Scroll to show the optimistic message
 
     try {
       const response = await sendMessage(selectedChat.id, messageText);
@@ -389,10 +412,9 @@ const Messages: React.FC = () => {
   if (isLoading) {
     return (
       <div className="messages-page">
-        <Sidebar_2 />
         <div className="messages-content">
           <Navbar />
-          <div className="loading-container">
+          <div className="loading-container fade-in">
             <div className="loading-spinner"></div>
             <p>Loading chats...</p>
           </div>
@@ -405,10 +427,9 @@ const Messages: React.FC = () => {
   if (errorMessage && !showChatModal) {
     return (
       <div className="messages-page">
-        <Sidebar_2 />
         <div className="messages-content">
           <Navbar />
-          <div className="error-container">
+          <div className="error-container fade-in">
             <div className="error-icon">⚠️</div>
             <p className="error-message">{errorMessage}</p>
             <button className="retry-button" onClick={loadChats}>
@@ -422,8 +443,6 @@ const Messages: React.FC = () => {
 
   return (
     <div className="messages-page">
-      <Sidebar_2 />
-
       <div className="messages-content">
         <Navbar />
 
@@ -442,7 +461,7 @@ const Messages: React.FC = () => {
         </div>
 
         {chats.length === 0 ? (
-          <div className="no-chats">
+          <div className="no-chats slide-up-fade-in">
             <div className="no-chats-icon">💬</div>
             <p>No chats available</p>
             <button className="refresh-button" onClick={loadChats}>
@@ -450,60 +469,69 @@ const Messages: React.FC = () => {
             </button>
           </div>
         ) : (
-          chats.map((chat) => (
-            <div
-              className="review-card chat-card"
-              key={chat.id}
-              onClick={() => handleChatSelect(chat)}
-              style={{ cursor: "pointer" }}
-            >
-              <div className="review-card-header">
-                <div className="review-card-left">
-                  <img
-                    src={getDisplayAvatar(chat)}
-                    alt={`${getDisplayName(chat)} avatar`}
-                    className="reviewer-avatar"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/images/avatar.png";
-                    }}
-                  />
-                  <div>
-                    <h3 className="reviewer-name">{getDisplayName(chat)}</h3>
-                    <p className="review-date">
-                      {chat.customer?.email ||
-                        chat.business?.phoneNumber ||
-                        "No contact info"}
-                    </p>
-                    {chat.customer?.phoneNumber && (
-                      <p className="phone-number">
-                        {chat.customer.phoneNumber}
+          <div className="chat-list">
+            {chats.map((chat) => (
+              <div
+                className="review-card chat-card scale-in-center"
+                key={chat.id}
+                onClick={() => handleChatSelect(chat)}
+                style={{ cursor: "pointer" }}
+              >
+                <div className="review-card-header">
+                  <div className="review-card-left">
+                    <img
+                      src={getDisplayAvatar(chat)}
+                      alt={`${getDisplayName(chat)} avatar`}
+                      className="reviewer-avatar"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "/images/avatar.png";
+                      }}
+                    />
+                    <div>
+                      <h3 className="reviewer-name">{getDisplayName(chat)}</h3>
+                      <p className="review-date">
+                        {chat.customer?.email ||
+                          chat.business?.phoneNumber ||
+                          "No contact info"}
                       </p>
-                    )}
+                      {chat.customer?.phoneNumber && (
+                        <p className="phone-number">
+                          {chat.customer.phoneNumber}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="chat-indicator">
+                    <span className="chat-badge">
+                      Chat{" "}
+                      {chatMessagesCache[chat.id]?.length > 0 &&
+                        `(${chatMessagesCache[chat.id].length})`}
+                    </span>
                   </div>
                 </div>
-                <div className="chat-indicator">
-                  <span className="chat-badge">
-                    Chat{" "}
-                    {chatMessagesCache[chat.id]?.length > 0 &&
-                      `(${chatMessagesCache[chat.id].length})`}
-                  </span>
-                </div>
+                <p className="review-text">
+                  {chatMessagesCache[chat.id]?.length > 0
+                    ? `Last message: "${
+                        chatMessagesCache[chat.id][
+                          chatMessagesCache[chat.id].length - 1
+                        ].text.substring(0, 50) + "..."
+                      }"` // Show last message snippet
+                    : "Click to open chat conversation"}
+                </p>
               </div>
-              <p className="review-text">
-                {chatMessagesCache[chat.id]?.length > 0
-                  ? `${chatMessagesCache[chat.id].length} message${
-                      chatMessagesCache[chat.id].length !== 1 ? "s" : ""
-                    }`
-                  : "Click to open chat conversation"}
-              </p>
-            </div>
-          ))
+            ))}
+          </div>
         )}
 
         {/* Chat Modal */}
         {showChatModal && selectedChat && (
-          <div className="chat-modal-overlay" onClick={handleCloseModal}>
-            <div className="chat-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="chat-modal-overlay">
+            <div
+              className="chat-modal scale-in-center"
+              ref={chatModalRef}
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="chat-header">
                 <div className="chat-header-info">
                   <img
@@ -511,7 +539,8 @@ const Messages: React.FC = () => {
                     alt={`${getDisplayName(selectedChat)} avatar`}
                     className="chat-avatar"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/images/avatar.png";
+                      (e.target as HTMLImageElement).src =
+                        "/images/avatar.png";
                     }}
                   />
                   <div>
@@ -545,12 +574,12 @@ const Messages: React.FC = () => {
 
               <div className="chat-messages">
                 {loadingMessages ? (
-                  <div className="loading-messages">
+                  <div className="loading-messages fade-in">
                     <div className="loading-spinner-small"></div>
                     <p>Loading messages...</p>
                   </div>
                 ) : errorMessage ? (
-                  <div className="error-messages">
+                  <div className="error-messages fade-in">
                     <div className="error-icon">⚠️</div>
                     <p>{errorMessage}</p>
                     <button
@@ -561,7 +590,7 @@ const Messages: React.FC = () => {
                     </button>
                   </div>
                 ) : messages.length === 0 ? (
-                  <div className="no-messages">
+                  <div className="no-messages fade-in">
                     <div className="no-messages-icon">💬</div>
                     <p>No messages yet</p>
                     <p className="no-messages-subtitle">
@@ -571,15 +600,13 @@ const Messages: React.FC = () => {
                 ) : (
                   <>
                     {messages.map((message, index) => {
-                      // isSender true means business sent it (like Flutter logic)
-                      const isBusinessMessage = message.isSender;
-
+                      const isBusinessMessage = message.isSender; // true means business sent it
                       return (
                         <div
                           key={message.id || `message-${index}`}
                           className={`message ${
                             isBusinessMessage ? "sent" : "received"
-                          }`}
+                          } fade-in-message`}
                         >
                           <div className="message-content">
                             <p className="message-text">{message.text}</p>

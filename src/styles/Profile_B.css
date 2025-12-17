@@ -1,186 +1,470 @@
-/* Base styles for desktop */
+/* --- Variables for consistent theming (adjust as needed to match your project's global variables) --- */
+:root {
+  --primary-purple: #8a5bc6; /* Example primary color */
+  --light-purple: #e8dced; /* Lighter shade for backgrounds/accents */
+  --gradient-primary: linear-gradient(135deg, #8a5bc6 0%, #a855f7 100%);
+  --text-dark: #333;
+  --text-medium: #555;
+  --text-light: #888;
+  --border-color: #e0e0e0;
+  --input-border: #ccc;
+  --input-focus-border: #8a5bc6;
+  --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.08);
+  --shadow-medium: 0 8px 20px rgba(0, 0, 0, 0.15);
+  --shadow-heavy: 0 12px 30px rgba(0, 0, 0, 0.2);
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --transition-speed: 0.3s;
+  --transition-easing: ease-in-out;
+
+  --navbar-height-desktop: 60px; /* Ensure these match your Navbar's actual heights */
+  --navbar-height-mobile: 56px;
+  --sidebar-width-desktop: 240px; /* From Sidebar_2.css */
+}
+
+/* --- Base Styles for the Page --- */
 .profile_b-page {
   display: flex;
   min-height: 100vh;
-  background-color: #fff;
-  margin-left: 240px; /* Width of Sidebar_2 */
-  padding-top: 60px; /* Height of fixed Navbar */
+  background-color: #f7f7f7; /* Lighter background for the entire page */
+  /* Margin for sidebar (adjusted for Navbar integration) */
+  margin-left: var(--sidebar-width-desktop);
+  padding-top: var(--navbar-height-desktop); /* Space for fixed Navbar */
+  box-sizing: border-box; /* Include padding in dimensions */
+  transition: margin-left var(--transition-speed) var(--transition-easing);
+  position: relative; /* For Toast z-index */
 }
 
+/* Ensure the content itself aligns correctly */
 .profile_b-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   position: relative;
+  z-index: 1; /* Below navbar/sidebar, above blur effects */
+  background-color: #fff; /* White background for the main content area */
+  box-shadow: var(--shadow-light); /* Subtle shadow for content area */
+  border-radius: var(--border-radius-md);
+  margin: 20px; /* Margin around the content block */
+  overflow: hidden; /* Important for border-radius and inner elements */
+  transition: filter 0.3s var(--transition-easing); /* For blur effect */
+  animation: fadeInSlideUp 0.8s var(--transition-easing) forwards; /* Initial page animation */
 }
 
-/* Top bar with light purple background */
+/* Initial page load animation */
+@keyframes fadeInSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* Blur effect for main content when modal/toast is open */
+.profile_b-content.blurred {
+  filter: blur(5px);
+  pointer-events: none; /* Disable interaction */
+  transform: scale(0.98); /* Slight scale down effect */
+}
+
+/* --- Top Bar and Avatar Section --- */
 .profile_b-topbar {
-  background-color: #e8dced;
-  height: 160px;
+  background: var(--gradient-primary); /* Use gradient for top bar */
+  height: 180px; /* Increased height for visual impact */
   position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center; /* Center the avatar container horizontally */
+  padding-bottom: 20px; /* Space for avatar overlap */
 }
 
-/* Avatar overlapping the top bar */
 .profile_b-avatar-container {
   position: absolute;
-  bottom: -40px;
-  left: 40px;
-}
-
-.profile_b-avatar {
-  width: 80px;
-  height: 80px;
+  bottom: -60px; /* More overlap */
+  width: 120px; /* Larger avatar */
+  height: 120px;
   border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #fff;
-}
-
-.profile_b-avatar-placeholder {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background-color: #f5f5f5;
-  border: 3px solid #fff;
+  border: 5px solid #fff; /* White border */
+  box-shadow: var(--shadow-medium); /* Stronger shadow */
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  background-color: #eee; /* Fallback background */
+  cursor: pointer;
+  transition: transform var(--transition-speed) var(--transition-easing), box-shadow var(--transition-speed) var(--transition-easing);
 }
 
-/* Main section (below the purple bar) */
+.profile_b-avatar-container:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: var(--shadow-heavy);
+}
+
+.profile_b-avatar-container:hover .profile_b-upload-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.profile_b-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Placeholder for missing image */
+.profile_b-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px; /* Larger icon/emoji */
+  color: var(--text-light);
+  background-color: #f0f0f0; /* Light background */
+}
+.profile_b-avatar-placeholder img { /* For the actual placeholder image */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Upload overlay/button on avatar */
+.profile_b-upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9em;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity var(--transition-speed) var(--transition-easing), transform var(--transition-speed) var(--transition-easing);
+    transform: translateY(100%); /* Start hidden below */
+}
+.profile_b-avatar-container:hover .profile_b-upload-overlay {
+    opacity: 1;
+    transform: translateY(0);
+}
+/* Style for broken images */
+.profile_b-avatar.broken-image {
+  /* You can add specific styles here for broken images, e.g., a patterned background */
+  background-color: #f0f0f0; /* Light gray background */
+  content: url('/images/broken_image_placeholder.svg'); /* Replace with a broken image icon */
+  object-fit: contain; /* Ensure the icon fits */
+  border: 1px dashed #ccc;
+}
+
+
+/* --- Main Form Section --- */
 .profile_b-main {
-  margin-top: 60px;
-  padding: 0 40px 24px;
+  margin-top: 100px; /* Adjusted to account for larger avatar overlap */
+  padding: 0 40px 40px; /* Increased bottom padding */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Gap between title and form */
 }
 
-/* Title "Profile Date" */
 .profile_b-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px; /* Adjust spacing */
+  color: var(--text-dark);
+  text-align: center; /* Center align title */
+  position: relative; /* For underline effect */
 }
 
-/* Form with two columns */
+/* Title underline effect */
+.profile_b-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px; /* Length of underline */
+    height: 4px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+}
+
+
 .profile_b-form {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px 40px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+  gap: 25px 40px; /* Increased gap between columns and rows */
   max-width: 900px;
+  margin: 0 auto; /* Center the form */
+  padding-top: 20px; /* Space from title underline */
 }
 
-/* Each field with label and input */
 .profile_b-field {
   display: flex;
   flex-direction: column;
 }
 
 .profile_b-field label {
-  font-size: 14px;
-  color: #333;
+  font-size: 15px;
+  color: var(--text-dark);
   margin-bottom: 8px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .profile_b-field input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
+  padding: 12px 15px; /* Increased padding */
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius-sm);
+  font-size: 16px;
   outline: none;
+  transition: border-color var(--transition-speed) var(--transition-easing), box-shadow var(--transition-speed) var(--transition-easing);
 }
 
 .profile_b-field input:focus {
-  border-color: #8a5bc6;
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 3px rgba(138, 91, 198, 0.2); /* Focus ring */
 }
 
 /* Upload button style */
 .profile_b-upload-btn {
-  background-color: #f5f5f5;
-  color: #666;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 8px 12px;
+  background-color: #f0f0f0;
+  color: var(--text-medium);
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius-sm);
+  padding: 12px 15px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color var(--transition-speed) var(--transition-easing), border-color var(--transition-speed) var(--transition-easing);
+  text-align: left; /* Align text left within button */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis for long file names */
 }
 
 .profile_b-upload-btn:hover {
-  background-color: #eaeaea;
+  background-color: #e0e0e0;
+  border-color: #b0b0b0;
 }
 
 /* Save Changes button at bottom-right */
 .profile_b-actions {
-  margin-top: 24px;
-  text-align: right;
+  margin-top: 40px; /* More space above button */
+  text-align: center; /* Center button on all screens by default */
+  width: 100%;
 }
 
 .profile_b-save-btn {
-  background-color: #8a5bc6;
+  background: var(--gradient-primary); /* Gradient background */
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
+  border-radius: var(--border-radius-md); /* More rounded */
+  padding: 15px 30px; /* Larger padding */
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
+  font-size: 18px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Enhanced transition */
+  box-shadow: var(--shadow-light); /* Initial shadow */
+  min-width: 200px; /* Minimum width for the button */
 }
 
 .profile_b-save-btn:hover {
-  background-color: #7b4bb0;
+  transform: translateY(-3px) scale(1.02); /* Slight lift and scale */
+  box-shadow: var(--shadow-medium); /* Stronger shadow on hover */
 }
 
-/* Error and success message styles */
-.error-message {
-  color: red;
-  margin-bottom: 16px;
-  padding: 10px;
-  background-color: #ffe6e6;
-  border: 1px solid #ff4444;
-  border-radius: 4px;
+.profile_b-save-btn:active {
+  transform: translateY(0) scale(1); /* Press down effect */
+  box-shadow: var(--shadow-light);
 }
 
-.success-message {
-  color: green;
-  margin-bottom: 16px;
-  padding: 10px;
+.profile_b-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+
+/* --- Toast/Notification Styles --- */
+.profile_b-toast {
+  position: fixed;
+  top: 90px; /* Below Navbar */
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: var(--border-radius-sm);
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  box-shadow: var(--shadow-medium);
+  z-index: 2000; /* Above all other content including modals */
+  animation: slideInRight 0.5s ease-out forwards, fadeOut 0.5s ease-out 4.5s forwards; /* In and out animation */
+}
+
+.profile_b-toast-success {
   background-color: #e6ffe6;
+  color: #28a745;
   border: 1px solid #44ff44;
-  border-radius: 4px;
 }
 
-/* RESPONSIVE DESIGN */
+.profile_b-toast-error {
+  background-color: #ffe6e6;
+  color: #dc3545;
+  border: 1px solid #ff4444;
+}
+
+.profile_b-toast button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Toast Animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* --- Loading Spinner Styles --- */
+.profile_b-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8); /* Semi-transparent white overlay */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500; /* Above main content, below toasts/modals */
+  font-size: 1.2em;
+  color: var(--primary-purple);
+}
+
+.profile_b-spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid var(--primary-purple);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+/* --- RESPONSIVE DESIGN --- */
 
 /* Tablets (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .profile_b-page {
-    margin-left: 0;
-    padding-top: 60px;
+    margin-left: 0; /* Sidebar might be collapsed or hidden on smaller screens */
+    padding-top: var(--navbar-height-desktop); /* Keep desktop navbar height */
   }
 
-  .profile_b-main {
-    padding: 0 24px 24px;
+  .profile_b-content {
+    margin: 15px; /* Slightly less margin */
+    padding-bottom: 20px; /* Ensure content padding bottom */
   }
 
-  .profile_b-form {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    max-width: 600px;
+  .profile_b-topbar {
+    height: 150px; /* Slightly shorter top bar */
   }
 
   .profile_b-avatar-container {
-    left: 24px;
+    width: 100px;
+    height: 100px;
+    bottom: -50px;
+    border-width: 4px; /* Adjust border */
+  }
+
+  .profile_b-upload-overlay {
+    font-size: 0.8em; /* Smaller font on overlay */
+  }
+
+  .profile_b-main {
+    margin-top: 80px; /* Adjust margin for smaller avatar */
+    padding: 0 30px 30px;
   }
 
   .profile_b-title {
-    font-size: 22px;
+    font-size: 26px;
+    margin-bottom: 15px;
+  }
+
+  .profile_b-title::after {
+    bottom: -8px;
+    width: 70px;
+  }
+
+  .profile_b-form {
+    grid-template-columns: 1fr; /* Stack columns on tablets */
+    gap: 20px;
+    max-width: 600px; /* Still constrain max width */
+  }
+
+  .profile_b-field label {
+    font-size: 14px;
+  }
+
+  .profile_b-field input,
+  .profile_b-upload-btn {
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+
+  .profile_b-save-btn {
+    padding: 14px 28px;
+    font-size: 17px;
+    width: auto; /* Allow button to shrink */
+  }
+
+  .profile_b-actions {
+    text-align: center; /* Center button */
+  }
+
+  .profile_b-toast {
+    top: 80px; /* Adjust toast position */
+    right: 15px;
   }
 }
 
 /* Small tablets and large phones (577px - 767px) */
 @media (min-width: 577px) and (max-width: 767px) {
   .profile_b-page {
-    margin-left: 0;
-    padding-top: 56px;
+    padding-top: var(--navbar-height-mobile); /* Use mobile navbar height */
   }
 
   .profile_b-topbar {
@@ -188,62 +472,61 @@
   }
 
   .profile_b-avatar-container {
-    left: 20px;
-    bottom: -30px;
-  }
-
-  .profile_b-avatar,
-  .profile_b-avatar-placeholder {
-    width: 60px;
-    height: 60px;
-  }
-
-  .profile_b-avatar-placeholder {
-    font-size: 20px;
+    width: 80px;
+    height: 80px;
+    bottom: -40px;
+    border-width: 3px;
   }
 
   .profile_b-main {
-    margin-top: 50px;
-    padding: 0 20px 24px;
+    margin-top: 60px;
+    padding: 0 20px 20px;
   }
 
   .profile_b-title {
-    font-size: 20px;
-    margin-bottom: 20px;
+    font-size: 24px;
+  }
+
+  .profile_b-title::after {
+    width: 60px;
   }
 
   .profile_b-form {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    max-width: 100%;
+    gap: 15px;
   }
 
-  .profile_b-field input {
-    padding: 10px;
-    font-size: 16px;
+  .profile_b-field label {
+    font-size: 13px;
   }
 
+  .profile_b-field input,
   .profile_b-upload-btn {
-    padding: 10px 12px;
-    font-size: 16px;
+    padding: 10px;
+    font-size: 14px;
   }
 
   .profile_b-save-btn {
-    padding: 14px 24px;
+    padding: 12px 24px;
     font-size: 16px;
-    width: 100%;
+    min-width: 180px;
   }
 
-  .profile_b-actions {
-    text-align: center;
+  .profile_b-toast {
+    top: 70px;
+    right: 10px;
+    padding: 10px 15px;
+    font-size: 14px;
   }
 }
 
 /* Mobile phones (up to 576px) */
 @media (max-width: 576px) {
   .profile_b-page {
-    margin-left: 0;
-    padding-top: 56px;
+    padding-top: var(--navbar-height-mobile);
+  }
+
+  .profile_b-content {
+    margin: 10px;
   }
 
   .profile_b-topbar {
@@ -251,93 +534,79 @@
   }
 
   .profile_b-avatar-container {
-    left: 16px;
-    bottom: -25px;
-  }
-
-  .profile_b-avatar,
-  .profile_b-avatar-placeholder {
-    width: 50px;
-    height: 50px;
-  }
-
-  .profile_b-avatar-placeholder {
-    font-size: 18px;
+    width: 70px;
+    height: 70px;
+    bottom: -35px;
+    border-width: 3px;
   }
 
   .profile_b-main {
-    margin-top: 40px;
-    padding: 0 16px 24px;
+    margin-top: 50px;
+    padding: 0 15px 15px;
   }
 
   .profile_b-title {
-    font-size: 18px;
-    margin-bottom: 16px;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .profile_b-title::after {
+    width: 50px;
+    bottom: -5px;
   }
 
   .profile_b-form {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    max-width: 100%;
+    gap: 12px;
   }
 
   .profile_b-field label {
-    font-size: 14px;
-    margin-bottom: 6px;
+    font-size: 12px;
   }
 
-  .profile_b-field input {
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 8px;
-  }
-
+  .profile_b-field input,
   .profile_b-upload-btn {
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 8px;
+    padding: 8px;
+    font-size: 14px;
   }
 
   .profile_b-save-btn {
-    padding: 16px 24px;
-    font-size: 16px;
-    width: 100%;
-    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 15px;
+    min-width: 150px;
   }
 
-  .profile_b-actions {
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  .error-message,
-  .success-message {
-    margin-bottom: 12px;
-    padding: 8px;
-    font-size: 14px;
+  .profile_b-toast {
+    top: 65px;
+    right: 10px;
+    left: 10px; /* Full width on tiny screens */
+    width: auto;
+    font-size: 13px;
+    padding: 8px 12px;
   }
 }
 
 /* Extra small devices (up to 480px) */
 @media (max-width: 480px) {
-  .profile_b-main {
-    padding: 0 12px 24px;
+  .profile_b-content {
+    margin: 5px;
   }
-
+  .profile_b-topbar {
+    height: 80px;
+  }
   .profile_b-avatar-container {
-    left: 12px;
+    width: 60px;
+    height: 60px;
+    bottom: -30px;
   }
-
+  .profile_b-main {
+    margin-top: 40px;
+    padding: 0 10px 10px;
+  }
   .profile_b-title {
-    font-size: 16px;
+    font-size: 18px;
   }
-
-  .profile_b-field input,
-  .profile_b-upload-btn {
-    padding: 14px;
-  }
-
   .profile_b-save-btn {
-    padding: 18px 24px;
+    font-size: 14px;
+    padding: 8px 16px;
   }
 }

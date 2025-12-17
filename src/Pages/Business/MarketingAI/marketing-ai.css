@@ -23,8 +23,8 @@
 }
 
 /* Base styles that are safe to be global if applied to body/html,
-   but are now part of the module so they're scoped if applied to a container.
-   If these were truly global, they would go in App.css/index.css. */
+    but are now part of the module so they're scoped if applied to a container.
+    If these were truly global, they would go in App.css/index.css. */
 /* body remains global, assumed not managed by this specific CSS file */
 body {
   font-family: "Inter", sans-serif;

@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useCallback } from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaHome,
@@ -10,9 +12,8 @@ import {
   FaImages,
   FaBullhorn,
   FaShoppingCart,
-  FaSignOutAlt, // Keep this for the logout icon
-  FaBars,
-  FaTimes, // Keep this for close button
+  FaSignOutAlt,
+  FaTimes,
 } from "react-icons/fa";
 
 // NEW ICON IMPORTS
@@ -33,23 +34,26 @@ export interface Sidebar_2Props {
   email?: string;
   /** (Optional) URL of the user's avatar image */
   avatarUrl?: string;
-  /** Whether the mobile menu is currently open */
-  isMobileMenuOpen?: boolean;
-  /** Function to toggle the mobile menu open/closed */
-  toggleMobileMenu?: () => void;
+  /** Whether the sidebar is currently open */
+  isOpen?: boolean;
+  /** Function to toggle the sidebar open/closed */
+  onToggle?: (isOpen: boolean) => void;
+  /** Whether a modal is currently open on the page */
+  isModalOpen?: boolean; // New prop for modal awareness
 }
 
 const Sidebar_2: React.FC<Sidebar_2Props> = ({
   name: propName,
   email: propEmail,
   avatarUrl: propAvatarUrl,
-  isMobileMenuOpen = false,
-  toggleMobileMenu,
+  isOpen = true,
+  onToggle,
+  isModalOpen = false, // Default to false
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // State to handle toggling of the "Orders" submenu
+  // State to handle logout modal
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // State for user profile data
@@ -57,36 +61,10 @@ const Sidebar_2: React.FC<Sidebar_2Props> = ({
   const [profileLoading, setProfileLoading] = useState(true);
   const [profileError, setProfileError] = useState<string | null>(null);
 
-  // State to manage internal mobile menu state if toggleMobileMenu prop isn't provided
-  const [mobileOpen, setMobileOpen] = useState(isMobileMenuOpen);
-  // State to manage overlay visibility
-  const [overlayVisible, setOverlayVisible] = useState(isMobileMenuOpen);
+  // State to manage overlay visibility for mobile
+  const [overlayVisible, setOverlayVisible] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
-
-  // Use useCallback to memoize the function and fix the ESLint warning
-  const handleToggleMobileMenu = useCallback(
-    (forceState?: boolean) => {
-      const newState =
-        typeof forceState !== "undefined" ? forceState : !mobileOpen;
-
-      if (toggleMobileMenu) {
-        toggleMobileMenu();
-      } else {
-        setMobileOpen(newState);
-      }
-
-      setOverlayVisible(newState);
-
-      // Prevent body scrolling when menu is open
-      if (newState) {
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "";
-      }
-    },
-    [mobileOpen, toggleMobileMenu]
-  );
 
   // Fetch user profile data
   useEffect(() => {
@@ -109,17 +87,12 @@ const Sidebar_2: React.FC<Sidebar_2Props> = ({
     fetchUserProfile();
   }, []);
 
-  useEffect(() => {
-    // Update internal state when prop changes
-    setMobileOpen(isMobileMenuOpen);
-    setOverlayVisible(isMobileMenuOpen);
-  }, [isMobileMenuOpen]);
-
   // Handle window resize to automatically close mobile menu on larger screens
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768 && mobileOpen) {
-        handleToggleMobileMenu(false);
+      if (window.innerWidth > 1023 && !isOpen) {
+        // On desktop, ensure sidebar is open by default
+        onToggle?.(true);
       }
     };
 
@@ -127,7 +100,24 @@ const Sidebar_2: React.FC<Sidebar_2Props> = ({
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [mobileOpen, handleToggleMobileMenu]); // Fixed: Added handleToggleMobileMenu to dependencies
+  }, [isOpen, onToggle]);
+
+  // Handle overlay for mobile
+  useEffect(() => {
+    if (window.innerWidth <= 1023) {
+      setOverlayVisible(isOpen);
+      // Prevent body scrolling when menu is open on mobile
+      if (isOpen) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "";
+      }
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   // Handle logout with confirmation modal
   const handleLogoutClick = (e: React.MouseEvent) => {
@@ -164,42 +154,30 @@ const Sidebar_2: React.FC<Sidebar_2Props> = ({
       navigate(path);
 
       // Close mobile menu if on mobile screen
-      if (window.innerWidth <= 768) {
-        handleToggleMobileMenu(false);
+      if (window.innerWidth <= 1023) {
+        onToggle?.(false);
       }
     } catch (error) {
       console.warn("Navigation error:", error);
     }
   };
 
-  // Determine if using internal or external mobile menu state
-  const isMenuOpen = toggleMobileMenu ? isMobileMenuOpen : mobileOpen;
-
   // Determine which data to display (props take priority over fetched data)
   const displayName = propName || userProfile?.businessName || "Loading...";
-  const displayphoneNumber = propEmail || userProfile?.phoneNumber || "Loading..."; // Fallback since API doesn't provide email
+  const displayphoneNumber = propEmail || userProfile?.phoneNumber || "Loading...";
   const displayAvatar = propAvatarUrl || userProfile?.image;
 
   return (
     <>
-      {/* Mobile menu toggle button */}
-      <button
-        className="sidebar_2-toggle"
-        onClick={() => handleToggleMobileMenu()}
-        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-      >
-        {isMenuOpen ? <FaTimes /> : <FaBars />}
-      </button>
-
       {/* Background overlay for mobile */}
-      {overlayVisible && (
+      {overlayVisible && window.innerWidth <= 1023 && (
         <div
           className={`sidebar_2-overlay ${overlayVisible ? "active" : ""}`}
-          onClick={() => handleToggleMobileMenu(false)}
+          onClick={() => onToggle?.(false)}
         />
       )}
 
-      {/* Logout Confirmation Modal - REPLACED WITH SIDEBAR'S MODAL */}
+      {/* Logout Confirmation Modal */}
       {showLogoutModal && (
         <div className="logout-modal-overlay">
           <div className="logout-modal">
@@ -228,7 +206,7 @@ const Sidebar_2: React.FC<Sidebar_2Props> = ({
         </div>
       )}
 
-      <div className={`sidebar_2 ${isMenuOpen ? "mobile-open" : ""}`}>
+      <div className={`sidebar_2 ${isOpen ? "mobile-open" : "collapsed"} ${isModalOpen ? "modal-open" : ""}`}> {/* Add modal-open class */}
         {/* Top Section: Menu Items */}
         <div className="sidebar_2-top">
           <ul className="sidebar_2-menu">
@@ -344,7 +322,7 @@ const Sidebar_2: React.FC<Sidebar_2Props> = ({
                 onClick={() => handleNavigate("/orders/all")}
               >
                 <FaShoppingCart className="sidebar_2-icon" />
-                <span> Orders </span>
+                <span>Orders</span>
               </Link>
             </li>
 
@@ -362,7 +340,7 @@ const Sidebar_2: React.FC<Sidebar_2Props> = ({
         <div className="sidebar_2-bottom">
           {displayAvatar && (
             <img
-              src={displayAvatar}
+              src={displayAvatar || "/placeholder.svg"}
               alt="User Avatar"
               className="sidebar_2-avatar"
               onError={(e) => {

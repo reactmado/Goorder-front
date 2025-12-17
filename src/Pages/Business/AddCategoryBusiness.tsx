@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaPlus, FaEllipsisV } from "react-icons/fa";
-import Sidebar_2 from "../../components/Sidebar_2/Sidebar_2";
 import "../../styles/AddCategoryBusiness.css";
 import Navbar from "../../components/navbar copy/Navbar";
 import CategoryService, {
@@ -231,7 +230,6 @@ const AddCategoryBusiness: React.FC = () => {
         }`}
       >
         {/* Sidebar */}
-        <Sidebar_2 />
 
         {/* Main content area */}
         <div className="add-category-business-content">

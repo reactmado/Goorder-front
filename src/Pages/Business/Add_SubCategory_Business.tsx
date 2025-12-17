@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import Sidebar_2 from "../../components/Sidebar_2/Sidebar_2";
 import Navbar from "../../components/navbar copy/Navbar";
-import { FaEllipsisV, FaPlus } from "react-icons/fa"; // Import FaPlus for the Add button
+import { FaEllipsisV, FaPlus, FaArrowLeft } from "react-icons/fa"; // Added FaArrowLeft
 import {
   CategoryService,
   Category,
@@ -32,12 +31,16 @@ const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
       setError(null);
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 500);
+      
       if (editingItem) {
         setCategoryName(
           "name" in editingItem ? editingItem.name : editingItem.categoryName
@@ -45,7 +48,7 @@ const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
         setImagePreview(
           "image" in editingItem ? editingItem.image : editingItem.categoryImage
         );
-        setSelectedFile(null); // Clear selected file, user will re-upload if needed
+        setSelectedFile(null);
       } else {
         setCategoryName("");
         setSelectedFile(null);
@@ -65,7 +68,6 @@ const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
       reader.readAsDataURL(file);
     } else {
       setSelectedFile(null);
-      // If no file is selected, but it's an edit, keep the old image preview
       if (!editingItem) {
         setImagePreview(null);
       }
@@ -97,60 +99,92 @@ const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
       } else {
         await onSubmit(data);
       }
-      handleClose(); // Close on successful submission
+      handleClose();
     } catch (err) {
-      // Error handling is managed by parent component's onSubmit prop
       console.error("Submission error:", err);
     }
   };
 
   const handleClose = () => {
-    setCategoryName("");
-    setSelectedFile(null);
-    setImagePreview(null);
-    setError(null);
-    onClose();
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCategoryName("");
+      setSelectedFile(null);
+      setImagePreview(null);
+      setError(null);
+      setIsAnimating(false);
+      onClose();
+    }, 300);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={handleClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <button type="button" className="back-button" onClick={handleClose}>
-            ←
+    <div className={`modal-overlay ${isAnimating ? 'animating' : ''}`} onClick={handleClose}>
+      <div className={`modal-content ${isAnimating ? 'modal-animating' : ''}`} onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header-centered">
+          <button type="button" className="modal-back-button" onClick={handleClose}>
+            <FaArrowLeft />
           </button>
-          <h2>{editingItem ? "Edit Category" : "Add New Category"}</h2>
+          <h2 className="modal-title">
+            {editingItem ? "Edit Category" : parentCategoryId ? "Add Subcategory" : "Add Category"}
+          </h2>
+          <div className="modal-header-spacer"></div>
         </div>
 
         <form onSubmit={handleSubmit} className="modal-form">
-          {error && <p className="error-message">{error}</p>}
+          {error && (
+            <div className="error-notification">
+              <span className="error-icon">⚠️</span>
+              <p className="error-message">{error}</p>
+            </div>
+          )}
+          
           <div className="form-group">
-            <label>Category Name</label>
-            <input
-              type="text"
-              value={categoryName}
-              onChange={(e) => setCategoryName(e.target.value)}
-              placeholder="Enter category name"
-              required
-              disabled={isLoading}
-            />
+            <label className="form-label">
+              <span className="label-text">Category Name</span>
+              <span className="label-required">*</span>
+            </label>
+            <div className="input-wrapper">
+              <input
+                type="text"
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+                placeholder="Enter category name..."
+                required
+                disabled={isLoading}
+                className="form-input"
+              />
+              <div className="input-underline"></div>
+            </div>
           </div>
 
           <div className="form-group">
-            <label>Upload Photo</label>
+            <label className="form-label">
+              <span className="label-text">Upload Photo</span>
+            </label>
             <div className="image-upload-section">
-              <div className="image-preview">
+              <div className="image-preview-container">
                 {imagePreview ? (
-                  <img src={imagePreview} alt="Preview" />
+                  <div className="image-preview">
+                    <img src={imagePreview} alt="Preview" />
+                    <div className="image-overlay">
+                      <span>Change</span>
+                    </div>
+                  </div>
                 ) : (
-                  <div className="image-placeholder">📷</div>
+                  <div className="image-placeholder">
+                    <div className="placeholder-icon">📷</div>
+                    <span>No image</span>
+                  </div>
                 )}
               </div>
-              <label
-                className="upload-button"
+              
+              <button
+                type="button"
+                className="upload-button-enhanced"
                 onClick={() => fileInputRef.current?.click()}
+                disabled={isLoading}
               >
                 <input
                   type="file"
@@ -160,17 +194,36 @@ const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
                   disabled={isLoading}
                   ref={fileInputRef}
                 />
-                <div className="upload-content">
-                  <span>📤</span>
-                  <span>Add/Change</span>
-                </div>
-              </label>
+                <div className="upload-icon">📤</div>
+                <span>{imagePreview ? "Change Photo" : "Upload Photo"}</span>
+              </button>
             </div>
           </div>
 
-          <button type="submit" className="save-button" disabled={isLoading}>
-            {isLoading ? "Saving..." : "Save Changes"}
-          </button>
+          <div className="form-actions">
+            <button 
+              type="button" 
+              className="cancel-button" 
+              onClick={handleClose}
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              className="save-button-enhanced" 
+              disabled={isLoading || !categoryName.trim()}
+            >
+              {isLoading ? (
+                <>
+                  <div className="loading-spinner-small"></div>
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <span>{editingItem ? "Update Category" : "Create Category"}</span>
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -197,15 +250,20 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div
-        className="delete-modal-content"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 className="delete-modal-title">Confirm Deletion</h2>
-        <p className="delete-modal-message">
-          Are you sure you want to delete "{itemName}"? This action cannot be
-          undone.
-        </p>
+      <div className="delete-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="delete-modal-header">
+          <div className="delete-icon">🗑️</div>
+          <h2 className="delete-modal-title">Confirm Deletion</h2>
+        </div>
+        
+        <div className="delete-modal-body">
+          <p className="delete-modal-message">
+            Are you sure you want to delete <strong>"{itemName}"</strong>?
+          </p>
+          <p className="delete-modal-warning">
+            This action cannot be undone and will permanently remove this item.
+          </p>
+        </div>
 
         <div className="delete-modal-actions">
           <button
@@ -213,14 +271,21 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
             onClick={onClose}
             disabled={isLoading}
           >
-            Cancel
+            Keep Item
           </button>
           <button
             className="delete-modal-confirm-button"
             onClick={onConfirm}
             disabled={isLoading}
           >
-            {isLoading ? "Deleting..." : "Delete"}
+            {isLoading ? (
+              <>
+                <div className="loading-spinner-small"></div>
+                <span>Deleting...</span>
+              </>
+            ) : (
+              <span>Delete Forever</span>
+            )}
           </button>
         </div>
       </div>
@@ -233,35 +298,27 @@ const AddSubCategoryBusiness: React.FC = () => {
   const [categories, setCategories] = useState<(Category | SubCategory)[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null
-  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [pageTitle, setPageTitle] = useState("Categories");
   const [isViewingSubcategories, setIsViewingSubcategories] = useState(false);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isSavingCategory, setIsSavingCategory] = useState(false);
-  const [editingItem, setEditingItem] = useState<Category | SubCategory | null>(
-    null
-  );
-  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] =
-    useState(false);
+  const [editingItem, setEditingItem] = useState<Category | SubCategory | null>(null);
+  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{
     id: number;
     name: string;
   } | null>(null);
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null); // State for three dots menu
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
-  // Business ID from localStorage
   const businessId = localStorage.getItem("id");
 
   useEffect(() => {
     fetchCategories();
   }, []);
 
-  // Effect to close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Check if the clicked element is not part of any dropdown menu
       const target = event.target as HTMLElement;
       if (
         !target.closest(".dropdown-menu") &&
@@ -288,7 +345,7 @@ const AddSubCategoryBusiness: React.FC = () => {
     setIsViewingSubcategories(false);
     setPageTitle("Categories");
     setSelectedCategoryId(null);
-    setOpenMenuId(null); // Close any open menu
+    setOpenMenuId(null);
 
     try {
       const data = await CategoryService.fetchCategories(businessId);
@@ -306,9 +363,8 @@ const AddSubCategoryBusiness: React.FC = () => {
     setHasError(false);
     setIsViewingSubcategories(true);
     setSelectedCategoryId(parentId);
-    setOpenMenuId(null); // Close any open menu
+    setOpenMenuId(null);
 
-    // Find parent category name for the title
     const parentCategory = categories.find(
       (cat) => getCategoryId(cat) === parentId
     );
@@ -333,18 +389,15 @@ const AddSubCategoryBusiness: React.FC = () => {
     setIsSavingCategory(true);
     try {
       if (id) {
-        // Editing an existing category/subcategory
         await CategoryService.updateCategory(id, data);
         alert("Category updated successfully!");
       } else {
-        // Adding a new category/subcategory
         await CategoryService.addCategory(data);
         alert("Category added successfully!");
       }
       setIsFormModalOpen(false);
-      setEditingItem(null); // Reset editing item
+      setEditingItem(null);
 
-      // Refresh the current view
       if (isViewingSubcategories && selectedCategoryId) {
         await fetchSubcategories(selectedCategoryId);
       } else {
@@ -363,20 +416,19 @@ const AddSubCategoryBusiness: React.FC = () => {
     const name = getCategoryName(item);
     setItemToDelete({ id, name });
     setIsDeleteConfirmModalOpen(true);
-    setOpenMenuId(null); // Close three dots menu
+    setOpenMenuId(null);
   };
 
   const handleDeleteConfirmed = async () => {
     if (!itemToDelete) return;
 
-    setIsLoading(true); // Show general loading
+    setIsLoading(true);
     try {
       await CategoryService.deleteCategory(itemToDelete.id);
       setIsDeleteConfirmModalOpen(false);
       setItemToDelete(null);
       alert("Category deleted successfully!");
 
-      // Refresh the current list after deletion
       if (isViewingSubcategories && selectedCategoryId) {
         await fetchSubcategories(selectedCategoryId);
       } else {
@@ -400,7 +452,7 @@ const AddSubCategoryBusiness: React.FC = () => {
   const handleEditClick = (item: Category | SubCategory) => {
     setEditingItem(item);
     setIsFormModalOpen(true);
-    setOpenMenuId(null); // Close three dots menu
+    setOpenMenuId(null);
   };
 
   const getCategoryImage = (category: Category | SubCategory): string => {
@@ -423,9 +475,8 @@ const AddSubCategoryBusiness: React.FC = () => {
     }
   };
 
-  // Toggle three dots menu
   const toggleMenu = (e: React.MouseEvent, itemId: number) => {
-    e.stopPropagation(); // Prevent document click from closing it immediately
+    e.stopPropagation();
     setOpenMenuId(openMenuId === itemId ? null : itemId);
   };
 
@@ -433,12 +484,7 @@ const AddSubCategoryBusiness: React.FC = () => {
     <div className="add-category-business-page">
       <Navbar />
 
-      <div
-        className={`page-content ${
-          isFormModalOpen || isDeleteConfirmModalOpen ? "blurred" : ""
-        }`}
-      >
-        <Sidebar_2 />
+      <div className={`page-content ${isFormModalOpen || isDeleteConfirmModalOpen ? "blurred" : ""}`}>
 
         <div className="add-category-business-content">
           <div className="add-category-business-header">
@@ -449,7 +495,7 @@ const AddSubCategoryBusiness: React.FC = () => {
                   className="back-button"
                   onClick={fetchCategories}
                 >
-                  ←
+                  <FaArrowLeft />
                 </button>
               )}
               <h1 className="page-title">{pageTitle}</h1>
@@ -461,7 +507,7 @@ const AddSubCategoryBusiness: React.FC = () => {
                   type="button"
                   className="add-subcategory-button"
                   onClick={() => {
-                    setEditingItem(null); // Ensure add mode
+                    setEditingItem(null);
                     setIsFormModalOpen(true);
                   }}
                   disabled={isSavingCategory || isLoading}
@@ -473,16 +519,16 @@ const AddSubCategoryBusiness: React.FC = () => {
             )}
           </div>
 
-          {isLoading &&
-            !isSavingCategory && ( // Show main loader only when not saving/deleting via modal
-              <div className="loading-container">
-                <div className="loading-spinner"></div>
-                <p>Loading...</p>
-              </div>
-            )}
+          {isLoading && !isSavingCategory && (
+            <div className="loading-container">
+              <div className="loading-spinner-enhanced"></div>
+              <p className="loading-text">Loading categories...</p>
+            </div>
+          )}
 
           {hasError && !isLoading && (
             <div className="error-container">
+              <div className="error-icon-large">❌</div>
               <p className="error-message">
                 Failed to load categories. Please try again.
               </p>
@@ -491,31 +537,34 @@ const AddSubCategoryBusiness: React.FC = () => {
                 className="retry-button"
                 onClick={handleRetry}
               >
-                Retry
+                Try Again
               </button>
             </div>
           )}
 
           {!isLoading && !hasError && categories.length === 0 && (
             <div className="no-categories-message">
-              <p>
-                No {isViewingSubcategories ? "subcategories" : "categories"}{" "}
-                found.
+              <div className="empty-state-icon">📂</div>
+              <h3 className="empty-state-title">
+                No {isViewingSubcategories ? "subcategories" : "categories"} found
+              </h3>
+              <p className="empty-state-description">
+                {!isViewingSubcategories 
+                  ? "Create your first category to get started organizing your business." 
+                  : "Add subcategories to better organize this category."}
               </p>
-              {!isViewingSubcategories && (
-                <p>Click "Add Category" to create your first category.</p>
-              )}
-              {isViewingSubcategories && (
-                <p>Click "Add Subcategory" to create your first subcategory.</p>
-              )}
             </div>
           )}
 
           {!isLoading && !hasError && categories.length > 0 && (
             <div className="categories-grid">
-              {categories.map((category) => (
-                <div key={getCategoryId(category)} className="category-card">
-                  {isViewingSubcategories && ( // Only show three dots for subcategories
+              {categories.map((category, index) => (
+                <div 
+                  key={getCategoryId(category)} 
+                  className="category-card"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  {isViewingSubcategories && (
                     <div className="category-menu">
                       <button
                         className="menu-button"
@@ -526,9 +575,11 @@ const AddSubCategoryBusiness: React.FC = () => {
                       {openMenuId === getCategoryId(category) && (
                         <div className="dropdown-menu">
                           <button onClick={() => handleEditClick(category)}>
+                            <span>✏️</span>
                             Modify
                           </button>
                           <button onClick={() => confirmDeleteItem(category)}>
+                            <span>🗑️</span>
                             Delete
                           </button>
                         </div>
@@ -548,8 +599,7 @@ const AddSubCategoryBusiness: React.FC = () => {
                       alt={getCategoryName(category)}
                       className="category-image"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src =
-                          "/placeholder-image.png"; // Fallback image
+                        (e.target as HTMLImageElement).src = "/placeholder-image.png";
                       }}
                     />
                     <p className="category-label">
@@ -577,7 +627,7 @@ const AddSubCategoryBusiness: React.FC = () => {
         onClose={() => setIsDeleteConfirmModalOpen(false)}
         onConfirm={handleDeleteConfirmed}
         itemName={itemToDelete?.name || ""}
-        isLoading={isLoading} // Use global loading for delete confirmation as well
+        isLoading={isLoading}
       />
     </div>
   );

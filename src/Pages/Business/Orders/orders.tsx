@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { Info, Loader2, RefreshCw, Filter, Search, X } from "lucide-react"
 import "./orders.css"
 import Nav_2 from "../../../components/navbar copy/Navbar"
-import Sidebar_2 from "../../../components/Sidebar_2/Sidebar_2"
 import {
   getOrders,
   updateOrderStatus,
@@ -293,7 +292,6 @@ export default function AllOrders() {
   return (
     <div className="app-container">
       <Nav_2 />
-      <Sidebar_2 />
 
       <main className="content-area" role="main">
         {/* Header */}
@@ -343,7 +341,7 @@ export default function AllOrders() {
         <div className="search-section">
           <div className="search-container">
             <div className="search-input-wrapper">
-              <Search size={20} className="search-icon" />
+              <Search size={20} className="search-icon2" />
               <input
                 type="text"
                 placeholder="Search orders by ID, customer, or status..."

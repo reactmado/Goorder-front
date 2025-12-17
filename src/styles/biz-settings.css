@@ -1,0 +1,448 @@
+/* Variables for consistent theming - ensure these are defined in a global CSS file or shared variable file if possible */
+:root {
+  --navbar-height: 60px; /* From your Navbar.css */
+  --sidebar-width-desktop: 240px; /* From your Sidebar_2.css */
+  --sidebar-width-tablet: 200px;
+  --sidebar-width-mobile: 280px;
+
+  /* Re-using colors from sidebar/navbar where appropriate */
+  --primary-purple: #8a5bc6;
+  --text-dark: #2d3748;
+  --text-medium: #4a5568;
+  --border-color: #e2e8f0;
+  --background-light: #eff0f4;
+  --background-lighter: #fdfdff;
+  --shadow-light: rgba(0, 0, 0, 0.08);
+
+  --transition-duration: 0.3s;
+  --transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Overall layout container to manage Navbar, Sidebar, and Main Content */
+.layout-container {
+  display: flex;
+  flex-direction: column; /* Default for smaller screens: Stack vertically */
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Main content area that adjusts based on sidebar state */
+.biz-settings-page-content {
+  flex-grow: 1; /* Allows content to take up remaining space */
+  padding: 20px;
+  background-color: var(--background-light); /* Or #f5f5f5 from original settings.css */
+  margin-top: var(--navbar-height); /* Push content below the fixed navbar */
+  transition: margin-left var(--transition-duration) var(--transition-timing-function),
+              filter var(--transition-duration) var(--transition-timing-function);
+  overflow-y: auto; /* Allow scrolling if content is too tall */
+  min-height: calc(100vh - var(--navbar-height)); /* Ensure it fills screen vertically */
+}
+
+/* Specific styling for when the sidebar is open/shifted on desktop */
+.biz-settings-page-content.sidebar-shifted {
+  margin-left: var(--sidebar-width-desktop);
+}
+
+/* Specific styling for when the sidebar is collapsed/hidden on desktop */
+.biz-settings-page-content.sidebar-collapsed {
+  margin-left: 0; /* No left margin when sidebar is hidden */
+}
+
+/* CRITICAL: Blur content when modal is active */
+.biz-settings-page-content.modal-active {
+  filter: blur(3px) !important;
+  pointer-events: none !important; /* Disable interaction with blurred elements */
+  transform: scale(0.98); /* Subtle scale down for "shift" effect */
+}
+
+/* Settings Page Specific Styles - Renamed Classes */
+.biz-settings-container {
+  max-width: 800px; /* Limit width for better readability */
+  margin: 20px auto; /* Center the settings content horizontally */
+  background: var(--background-lighter); /* White background for the card */
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--shadow-light);
+}
+
+.biz-settings-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.biz-settings-menu {
+  background: var(--background-lighter);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.biz-settings-menu-active {
+  color: var(--primary-purple); /* Using primary-purple for active state */
+  font-weight: bold;
+  padding-bottom: 10px; /* Add some padding for the active text */
+}
+
+.biz-settings-divider {
+  border: 0;
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 15px 0;
+}
+
+.biz-settings-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 10px;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  color: var(--text-medium);
+}
+
+.biz-settings-option:hover {
+  background-color: rgba(138, 91, 198, 0.05); /* Light purple hover */
+  transform: translateX(3px);
+}
+
+/* Toggle Switch */
+.biz-settings-switch {
+  position: relative;
+  display: inline-block;
+  width: 40px; /* Slightly larger switch */
+  height: 24px;
+}
+
+.biz-settings-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.biz-settings-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border-color); /* Grey for off */
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.biz-settings-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px; /* Slightly larger knob */
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+input:checked + .biz-settings-slider {
+  background-color: var(--primary-purple); /* Purple for on */
+}
+
+input:checked + .biz-settings-slider:before {
+  transform: translateX(16px); /* Adjusted for new width */
+}
+
+.biz-settings-option-right {
+  color: var(--text-light); /* Lighter grey for option right text */
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Popup Styles - Renamed Classes */
+.biz-settings-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* Darker background effect */
+  backdrop-filter: blur(8px); /* More blur for better separation */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000; /* Higher z-index to be above all elements, including navbar and sidebar modals */
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.biz-settings-popup-content {
+  background: var(--background-lighter);
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  width: 90%; /* Responsive width */
+  max-width: 450px; /* Max width for larger screens */
+  box-shadow: 0px 8px 24px var(--shadow-medium);
+  animation: scaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* More dynamic animation */
+  position: relative; /* For potential close button positioning */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.biz-settings-popup-content h2 {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--text-dark);
+  margin-bottom: 25px;
+}
+
+.biz-settings-language-option {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align left */
+  padding: 15px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  color: var(--text-medium);
+}
+
+.biz-settings-language-option:hover {
+  background-color: rgba(138, 91, 198, 0.08);
+  border-color: var(--primary-purple);
+  transform: translateY(-2px);
+}
+
+.biz-settings-language-option.selected {
+  border: 2px solid var(--primary-purple);
+  color: var(--primary-purple);
+  background-color: rgba(138, 91, 198, 0.1);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(138, 91, 198, 0.2);
+}
+
+.biz-settings-flag-icon {
+  width: 32px; /* Slightly larger flag */
+  height: 22px;
+  margin-right: 15px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.biz-settings-select-button {
+  background-color: var(--primary-purple);
+  color: white;
+  border-radius: 10px;
+  height: 50px;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 25px;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(138, 91, 198, 0.3);
+}
+
+.biz-settings-select-button:hover {
+  background-color: #7c3aed; /* Darker purple on hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(138, 91, 198, 0.4);
+}
+
+.biz-settings-select-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(138, 91, 198, 0.2);
+}
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
+
+/* Desktop (>= 1024px): Sidebar visible, content shifted */
+@media (min-width: 1024px) {
+  .layout-container {
+    flex-direction: row; /* Layout side-by-side */
+  }
+
+  .biz-settings-page-content.sidebar-shifted {
+    margin-left: var(--sidebar-width-desktop); /* Standard desktop sidebar width */
+  }
+
+  .biz-settings-page-content.sidebar-collapsed {
+    margin-left: 0; /* If sidebar is manually collapsed on desktop */
+  }
+}
+
+/* Tablets (768px to 1023px): Sidebar initially collapsed, overlays when open. Content never shifts left. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .biz-settings-page-content {
+    margin-left: 0; /* Content always starts from left, sidebar overlays */
+    margin-top: var(--navbar-height);
+  }
+
+  .biz-settings-container {
+    padding: 25px;
+    margin: 15px auto;
+  }
+
+  .biz-settings-title {
+    font-size: 26px;
+    margin-bottom: 20px;
+  }
+
+  .biz-settings-option {
+    font-size: 16px;
+    padding: 12px 8px;
+  }
+
+  .biz-settings-switch {
+    width: 36px;
+    height: 20px;
+  }
+
+  .biz-settings-slider:before {
+    height: 16px;
+    width: 16px;
+  }
+
+  input:checked + .biz-settings-slider:before {
+    transform: translateX(16px);
+  }
+
+  .biz-settings-popup-content {
+    padding: 25px;
+    max-width: 400px;
+  }
+
+  .biz-settings-language-option {
+    font-size: 16px;
+    padding: 12px 15px;
+  }
+
+  .biz-settings-flag-icon {
+    width: 28px;
+    height: 18px;
+    margin-right: 12px;
+  }
+
+  .biz-settings-select-button {
+    height: 48px;
+    font-size: 16px;
+  }
+}
+
+/* Mobile Phones (max-width: 767px): Sidebar initially collapsed, overlays when open. Content never shifts left. */
+@media (max-width: 767px) {
+  .biz-settings-page-content {
+    margin-left: 0; /* Content always starts from left, sidebar overlays */
+    margin-top: var(--navbar-height);
+    padding: 15px; /* Less padding on small screens */
+  }
+
+  .biz-settings-container {
+    padding: 20px;
+    margin: 10px auto;
+    max-width: 100%; /* Take full width on small screens */
+  }
+
+  .biz-settings-title {
+    font-size: 22px;
+    margin-bottom: 18px;
+  }
+
+  .biz-settings-option {
+    font-size: 15px;
+    padding: 10px 5px;
+  }
+
+  .biz-settings-switch {
+    width: 32px;
+    height: 18px;
+  }
+
+  .biz-settings-slider:before {
+    height: 14px;
+    width: 14px;
+    left: 2px;
+    bottom: 2px;
+  }
+
+  input:checked + .biz-settings-slider:before {
+    transform: translateX(14px);
+  }
+
+  .biz-settings-popup-content {
+    padding: 20px;
+  }
+
+  .biz-settings-popup-content h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .biz-settings-language-option {
+    font-size: 15px;
+    padding: 10px 12px;
+  }
+
+  .biz-settings-flag-icon {
+    width: 25px;
+    height: 16px;
+    margin-right: 10px;
+  }
+
+  .biz-settings-select-button {
+    height: 45px;
+    font-size: 15px;
+  }
+}
+
+/* Mobile Phones (max-width: 480px) */
+@media (max-width: 480px) {
+  .biz-settings-container {
+    padding: 15px;
+    margin: 5px auto;
+  }
+
+  .biz-settings-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  .biz-settings-option {
+    font-size: 14px;
+    padding: 8px 0;
+  }
+
+  .biz-settings-popup-content {
+    padding: 15px;
+  }
+
+  .biz-settings-popup-content h2 {
+    font-size: 18px;
+  }
+
+  .biz-settings-language-option {
+    font-size: 14px;
+  }
+
+  .biz-settings-select-button {
+    font-size: 14px;
+    height: 40px;
+  }
+}

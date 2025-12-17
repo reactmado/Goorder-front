@@ -1,27 +1,21 @@
+"use client";
+
+import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import {
-  FaBars,
-  FaTimes,
-  FaSearch,
-  FaBell,
-  FaChevronUp,
-  FaChevronDown,
-} from "react-icons/fa";
+import { FaBars, FaTimes, FaSearch, FaBell, FaChevronUp, FaChevronDown } from "react-icons/fa";
 import "./Navbar.css";
-import { getUserProfile, ProfileData } from "../../service/Profile_service";
-import {
-  getBusinessProfile,
-  BusinessProfile,
-} from "../../service/Profile_B_service";
+import { getUserProfile, type ProfileData } from "../../service/Profile_service";
+import { getBusinessProfile, type BusinessProfile } from "../../service/Profile_B_service";
+import Sidebar_2 from "../Sidebar_2/Sidebar_2"; // Import Sidebar_2 here
 
 // Declare global properties for Google Translate to prevent TypeScript errors
 declare global {
   interface Window {
-    google: any; // Google's global object
-    googleTranslateElementInit: () => void; // Callback function for Google Translate
-    doGTranslate: (lang_pair: string) => void; // Unofficial API function used for programmatic translation
-    hideGoogleTranslateToolbar: () => void; // Our custom function to hide toolbar
+    google: any;
+    googleTranslateElementInit: () => void;
+    doGTranslate: (lang_pair: string) => void;
+    hideGoogleTranslateToolbar: () => void;
   }
 }
 
@@ -60,22 +54,21 @@ const SearchBar = ({
   setIsSearchExpanded: (expanded: boolean) => void;
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [matches, setMatches] = useState<SearchMatch[]>([]); // Reset matches on query clear
+  const [matches, setMatches] = useState<SearchMatch[]>([]);
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const searchBarRef = useRef<HTMLDivElement>(null); // Ref for the search container itself
+  const searchBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Debounce search to prevent excessive DOM manipulation
     const handler = setTimeout(() => {
       if (searchQuery.trim().length > 0) {
         findMatches(searchQuery);
       } else {
         clearHighlights();
         setMatches([]);
-        setCurrentMatchIndex(0); // Reset index
+        setCurrentMatchIndex(0);
       }
-    }, 300); // Debounce time
+    }, 300);
 
     return () => clearTimeout(handler);
   }, [searchQuery]);
@@ -83,26 +76,20 @@ const SearchBar = ({
   useEffect(() => {
     if (matches.length > 0) {
       highlightMatches();
-      // Only scroll if search is currently active and there's a current match
       if (isSearchExpanded && currentMatchIndex !== -1) {
         scrollToMatch(currentMatchIndex);
       }
     } else {
-      clearHighlights(); // Clear highlights if matches become empty
+      clearHighlights();
     }
   }, [matches, currentMatchIndex, isSearchExpanded]);
 
-  // Effect to handle clicks outside the search bar to collapse it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchBarRef.current &&
-        !searchBarRef.current.contains(event.target as Node)
-      ) {
-        // Only collapse if it's currently expanded
+      if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
         if (isSearchExpanded) {
           setIsSearchExpanded(false);
-          setSearchQuery(""); // Clear query when collapsing
+          setSearchQuery("");
         }
       }
     };
@@ -126,56 +113,45 @@ const SearchBar = ({
       return;
     }
 
-    clearHighlights(); // Clear existing highlights before finding new ones
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const searchText = query.toLowerCase(); // Fixed: Add eslint-disable-next-line
+    clearHighlights();
+    const searchText = query.toLowerCase();
     const newMatches: SearchMatch[] = [];
 
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode: function (node) {
-          const parent = node.parentElement;
-          if (!parent) return NodeFilter.FILTER_REJECT;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: (node) => {
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
 
-          // Exclude script, style, and elements related to the navbar/search bar itself or Google Translate
-          if (
-            parent.tagName === "SCRIPT" ||
-            parent.tagName === "STYLE" ||
-            parent.tagName === "NOSCRIPT" ||
-            parent.closest(".header") || // Exclude anything inside the navbar itself
-            parent.closest("#google_translate_element") ||
-            parent.closest(".goog-tooltip") ||
-            parent.closest(".skiptranslate")
-          ) {
-            return NodeFilter.FILTER_REJECT;
-          }
-
-          if (
-            node.textContent &&
-            node.textContent.toLowerCase().includes(searchText) // This is where `searchText` is used.
-          ) {
-            return NodeFilter.FILTER_ACCEPT;
-          }
-
+        if (
+          parent.tagName === "SCRIPT" ||
+          parent.tagName === "STYLE" ||
+          parent.tagName === "NOSCRIPT" ||
+          parent.closest(".header") ||
+          parent.closest("#google_translate_element") ||
+          parent.closest(".goog-tooltip") ||
+          parent.closest(".skiptranslate")
+        ) {
           return NodeFilter.FILTER_REJECT;
-        },
-      } as NodeFilter
-    );
+        }
+
+        if (node.textContent && node.textContent.toLowerCase().includes(searchText)) {
+          return NodeFilter.FILTER_ACCEPT;
+        }
+        return NodeFilter.FILTER_REJECT;
+      },
+    });
 
     let node;
     let position = 0;
+
     while ((node = walker.nextNode())) {
       const text = node.textContent || "";
-      // To get the actual element for scrolling/highlighting, we target the parent of the text node
-      // This is a common pattern to avoid breaking text nodes into tiny pieces.
       const parentElement = node.parentElement as HTMLElement;
-      if (text.toLowerCase().includes(searchText) && parentElement) { // This is where `searchText` is also used.
+
+      if (text.toLowerCase().includes(searchText) && parentElement) {
         newMatches.push({
           text,
-          element: parentElement, // Store the parent element
+          element: parentElement,
           position: position,
         });
         position++;
@@ -191,40 +167,33 @@ const SearchBar = ({
     highlights.forEach((el) => {
       const parent = el.parentNode;
       if (parent) {
-        // Create a text node from the highlighted content
         const textNode = document.createTextNode(el.textContent || "");
         parent.replaceChild(textNode, el);
-        parent.normalize(); // Merge adjacent text nodes back
+        parent.normalize();
       }
     });
   };
 
   const highlightMatches = () => {
     clearHighlights();
-
     if (searchQuery.trim().length === 0 || matches.length === 0) return;
 
-    const searchText = searchQuery.toLowerCase(); // This `searchText` is local to `highlightMatches`
+    const searchText = searchQuery.toLowerCase();
 
-    // Re-apply highlights after clearing
     matches.forEach((match, idx) => {
       const element = match.element;
       if (!element || !element.childNodes) return;
 
       const originalHTML = element.innerHTML;
-      // Use a more robust regex to find all instances of the search text case-insensitively
-      // Use the local `searchText` here
-      const regex = new RegExp(`(${searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi");
-
-
+      const regex = new RegExp(`(${searchText.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
       const newHTML = originalHTML.replace(regex, (match) => {
         const isActive = idx === currentMatchIndex;
-        // Ensure we don't double highlight by checking if it's already a highlight span
         if (match.includes('<span class="search-highlight')) {
-            return match; // Already highlighted, return as is
+          return match;
         }
         return `<span class="search-highlight ${isActive ? "search-highlight-active" : ""}">${match}</span>`;
       });
+
       element.innerHTML = newHTML;
     });
   };
@@ -234,23 +203,21 @@ const SearchBar = ({
 
     const allHighlights = document.querySelectorAll(".search-highlight");
     if (allHighlights.length > 0) {
-        // First, ensure the current active highlight is correctly marked.
-        allHighlights.forEach((el, i) => {
-            if (i === index) {
-                el.classList.add("search-highlight-active");
-            } else {
-                el.classList.remove("search-highlight-active");
-            }
-        });
-
-        // Then, scroll the correct one into view
-        const targetHighlight = allHighlights[index] as HTMLElement;
-        if (targetHighlight) {
-            targetHighlight.scrollIntoView({
-                behavior: "smooth",
-                block: "center",
-            });
+      allHighlights.forEach((el, i) => {
+        if (i === index) {
+          el.classList.add("search-highlight-active");
+        } else {
+          el.classList.remove("search-highlight-active");
         }
+      });
+
+      const targetHighlight = allHighlights[index] as HTMLElement;
+      if (targetHighlight) {
+        targetHighlight.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
     }
   };
 
@@ -264,7 +231,7 @@ const SearchBar = ({
     if (newState && searchInputRef.current) {
       setTimeout(() => searchInputRef.current?.focus(), 100);
     } else {
-      setSearchQuery(""); // Clear search when collapsing
+      setSearchQuery("");
     }
   };
 
@@ -282,10 +249,7 @@ const SearchBar = ({
 
   return (
     <>
-      <div
-        ref={searchBarRef}
-        className={`search-container ${isSearchExpanded ? "expanded" : ""}`}
-      >
+      <div ref={searchBarRef} className={`search-container ${isSearchExpanded ? "expanded" : ""}`}>
         <div className="search-icon">
           <FaSearch size={16} />
         </div>
@@ -311,7 +275,6 @@ const SearchBar = ({
           </div>
         )}
       </div>
-      {/* This button toggles the search bar's visibility on small screens */}
       <button className="search-toggle" onClick={toggleSearch}>
         <FaSearch size={18} />
       </button>
@@ -322,31 +285,28 @@ const SearchBar = ({
 const UserAvatar = ({ imageUrl }: { imageUrl: string }) => {
   return (
     <div className="user-avatar">
-      <img src={imageUrl} alt="User profile" />
+      <img src={imageUrl || "/placeholder.svg"} alt="User profile" />
     </div>
   );
 };
 
 interface NavbarProps {
-  sidebarToggle?: () => void;
-  isSidebarOpen?: boolean;
+  isModalOpen?: boolean; // Prop to indicate if any modal is open on the page
 }
 
-const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
+const Navbar: React.FC<NavbarProps> = ({ isModalOpen = false }) => {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
-  const [businessProfile, setBusinessProfile] =
-    useState<BusinessProfile | null>(null);
+  const [businessProfile, setBusinessProfile] = useState<BusinessProfile | null>(null);
   const [isArabic, setIsArabic] = useState<boolean>(false);
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false); // State for search bar expansion
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Navbar manages sidebar open state
 
-  // Function to delete a cookie
   const deleteCookie = (name: string) => {
     document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/;";
   };
 
-  // Function to hide Google Translate elements
   const hideGoogleTranslateElements = () => {
     const elementsToHide = [
       "#goog-gt-tt",
@@ -372,7 +332,6 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
       });
     });
 
-    // Ensure body positioning is correct
     document.body.style.marginTop = "0";
     document.body.style.top = "0";
     document.body.style.position = "static";
@@ -406,11 +365,8 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
     loadUserProfile();
     loadBusinessProfile();
 
-    // Check translation state
     const checkTranslationState = () => {
-      const googtransCookie = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("googtrans="));
+      const googtransCookie = document.cookie.split("; ").find((row) => row.startsWith("googtrans="));
 
       if (googtransCookie && googtransCookie.includes("/ar")) {
         setIsArabic(true);
@@ -419,18 +375,13 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
       }
     };
 
-    // Check immediately
     checkTranslationState();
 
-    // Set up interval to monitor cookie changes
     const translationMonitor = setInterval(checkTranslationState, 500);
-
-    // Cleanup function to hide Google Translate elements periodically
     const hideTranslateElements = setInterval(() => {
       hideGoogleTranslateElements();
     }, 1000);
 
-    // Initial cleanup
     setTimeout(hideGoogleTranslateElements, 100);
 
     return () => {
@@ -443,36 +394,26 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
     setShowDropdown((prev) => !prev);
   };
 
+  // Internal sidebar toggle function
   const handleToggleSidebar = () => {
-    if (sidebarToggle) {
-      sidebarToggle();
-    }
+    setIsSidebarOpen((prev) => !prev);
   };
 
-  // Enhanced function to handle language translation toggle
   const handleTranslateToggle = () => {
     if (isArabic) {
-      // If currently in Arabic, revert to original (English)
-      deleteCookie("googtrans"); // Delete the main translation cookie
-      deleteCookie("googtrans_session"); // Delete session cookie
-
-      // Force page reload to revert to original content
+      deleteCookie("googtrans");
+      deleteCookie("googtrans_session");
       window.location.reload();
     } else {
-      // If currently in English, translate to Arabic
       if (window.doGTranslate) {
-        window.doGTranslate("en|ar"); // Translate from English to Arabic
-        setIsArabic(true); // Set state to Arabic
-
-        // Additional cleanup after translation
+        window.doGTranslate("en|ar");
+        setIsArabic(true);
         setTimeout(() => {
           hideGoogleTranslateElements();
         }, 1000);
-
         setTimeout(() => {
           hideGoogleTranslateElements();
         }, 2000);
-
         setTimeout(() => {
           hideGoogleTranslateElements();
         }, 3000);
@@ -480,70 +421,63 @@ const Navbar: React.FC<NavbarProps> = ({ sidebarToggle, isSidebarOpen }) => {
         console.warn(
           "Google Translate function (doGTranslate) not found. Ensure the script is loaded correctly in index.html."
         );
-        alert(
-          "Translation service not ready. Please try again or check your internet connection."
-        );
+        alert("Translation service not ready. Please try again or check your internet connection.");
       }
     }
   };
 
-  // Use business profile image first, then fall back to user profile image
-  const profileImageUrl =
-    businessProfile?.image || profileData?.image || "/photos/boy1.png";
+  const profileImageUrl = businessProfile?.image || profileData?.image || "/photos/boy1.png";
 
   return (
-    <header className={`header ${isSearchExpanded ? "search-expanded" : ""}`}>
-      <div className="header-left">
-        <button className="menu-toggle" onClick={handleToggleSidebar}>
-          {isSidebarOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
-        </button>
-        <div className="logo">
-          <Link to="/home" className="logo-link">
-            GoOrder
+    <>
+      <header className={`header ${isSearchExpanded ? "search-expanded" : ""} ${isModalOpen ? "modal-open" : ""}`}>
+        <div className="header-left">
+          <button className={`menu-toggle ${isSidebarOpen ? "sidebar-open" : ""}`} onClick={handleToggleSidebar}>
+            {isSidebarOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+          </button>
+          <div className="logo">
+            <Link to="/home" className="logo-link">
+              GoOrder
+            </Link>
+          </div>
+        </div>
+
+        <div className="header-center">
+          <SearchBar isSearchExpanded={isSearchExpanded} setIsSearchExpanded={setIsSearchExpanded} />
+        </div>
+
+        <div className="header-actions">
+          <button className="translate-button" onClick={handleTranslateToggle}>
+            <span className="translate-button-text notranslate">{isArabic ? "English" : "عربي"}</span>
+          </button>
+
+          <div className="notification-bell" onClick={toggleDropdown}>
+            <NotificationBell count={notifications.length} />
+          </div>
+
+          <Link to="/profile_b" className="profile-link">
+            <UserAvatar imageUrl={profileImageUrl} />
           </Link>
         </div>
-      </div>
 
-      <div className="header-center">
-        {/* Pass isSearchExpanded and setIsSearchExpanded to SearchBar */}
-        <SearchBar
-          isSearchExpanded={isSearchExpanded}
-          setIsSearchExpanded={setIsSearchExpanded}
-        />
-      </div>
-
-      <div className="header-actions">
-        {/* Translate Button: No icon, text changes based on language view */}
-        <button className="translate-button" onClick={handleTranslateToggle}>
-          <span className="translate-button-text">
-            {isArabic ? "English" : "عربي"}
-          </span>
-        </button>
-
-        <div className="notification-bell" onClick={toggleDropdown}>
-          <NotificationBell count={notifications.length} />
-        </div>
-
-        <Link to="/profile_b" className="profile-link">
-          <UserAvatar imageUrl={profileImageUrl} />
-        </Link>
-      </div>
-
-      {showDropdown && (
-        <div className="notification-dropdown">
-          <h3>Notifications</h3>
-          {notifications.length > 0 ? (
-            notifications.map((notif, index) => (
-              <div key={index} className="notification-item">
-                <p>{notif.message}</p>
-              </div>
-            ))
-          ) : (
-            <p>No new notifications</p>
-          )}
-        </div>
-      )}
-    </header>
+        {showDropdown && (
+          <div className="notification-dropdown">
+            <h3>Notifications</h3>
+            {notifications.length > 0 ? (
+              notifications.map((notif, index) => (
+                <div key={index} className="notification-item">
+                  <p>{notif.message}</p>
+                </div>
+              ))
+            ) : (
+              <p>No new notifications</p>
+            )}
+          </div>
+        )}
+      </header>
+      {/* Sidebar_2 is now rendered directly within Navbar */}
+      <Sidebar_2 isOpen={isSidebarOpen} onToggle={setIsSidebarOpen} isModalOpen={isModalOpen} />
+    </>
   );
 };
 

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Sidebar_2 from "../../components/Sidebar_2/Sidebar_2";
 import { FaStar, FaCheckCircle } from "react-icons/fa"; // Import the star and checkmark icons
 import "../../styles/Reviews.css"; // Ensure this CSS file is updated
 import Navbar from "../../components/navbar copy/Navbar";
@@ -71,7 +70,6 @@ const Reviews: React.FC = () => {
 
   return (
     <div className="reviews-page">
-      <Sidebar_2 />
       <div className="reviews-content">
         <Navbar />
         <h2 className="reviews-title">Customer Reviews</h2>

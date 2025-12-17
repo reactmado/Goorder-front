@@ -1,291 +1,396 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import "../../styles/BusPrivacy.css";
-import { FaArrowLeft, FaShieldAlt, FaUserShield, FaLock, FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
-import Navbar from "../../components/navbar copy/Navbar";
-import Sidebar_2 from "../../components/Sidebar_2/Sidebar_2";
+"use client"
 
-const PrivacyPolicy: React.FC = () => {
-  const navigate = useNavigate();
+import type React from "react"
+import { useNavigate } from "react-router-dom"
+import Navbar from "../../components/navbar copy/Navbar"
+import "../../styles/BusPrivacy.css"
+import {
+  FaArrowLeft,
+  FaFileContract,
+  FaUserCheck,
+  FaShoppingCart,
+  FaTruck,
+  FaShieldAlt,
+  FaExclamationTriangle,
+  FaGavel,
+  FaEdit,
+  FaEnvelope,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaClock,
+  FaHandshake,
+  FaInfoCircle,
+} from "react-icons/fa"
+
+const privacypolicy: React.FC = () => {
+  const navigate = useNavigate()
+
+  // handleBackClick function navigates back to the previous page in the browser history.
+  const handleBackClick = () => {
+    navigate(-1)
+  }
 
   return (
-    <>
+    <div className="terms-page">
+      {/* Navbar component is included at the top of the page */}
       <Navbar />
-      <div className="main-content">
-        <Sidebar_2 />
-        <div className="page-content-area">
-          {/* Fixed Header */}
-          <div className="privacy-fixed-header">
-            <button
-              className="back-button"
-              onClick={() => navigate("/bus-settings")}
-              aria-label="Go back to settings"
-            >
-              <FaArrowLeft />
-            </button>
-            <div className="header-title-section">
-              <FaShieldAlt className="header-icon" />
+
+      {/* Enhanced Header Section */}
+      <header className="terms-header">
+        <div className="terms-header-content">
+          {/* Back button to navigate to the previous page */}
+          <button className="terms-back-button" onClick={handleBackClick} aria-label="Go back to previous page">
+            <FaArrowLeft />
+            <span>Back</span>
+          </button>
+          <div className="terms-header-info">
+            <div className="terms-header-icon">
+              <FaFileContract />
+            </div>
+            <div className="terms-header-text">
               <h1>Privacy Policy</h1>
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <div className="privacy-content">
-            <div className="privacy-intro">
-              <div className="intro-icon">
-                <FaUserShield />
-              </div>
-              <div className="intro-text">
-                <h2>Your Privacy Matters</h2>
-                <p>
-                  Welcome to <strong>GoOrder</strong>. This Privacy Policy describes
-                  how we collect, use, and protect your personal information when
-                  you use our mobile application and services. By accessing or using
-                  our Services, you agree to the terms outlined below.
-                </p>
-              </div>
-            </div>
-
-            {/* Privacy Sections */}
-            <div className="privacy-sections">
-              <section className="privacy-section">
-                <div className="section-header">
-                  <div className="section-number">1</div>
-                  <h3>Information We Collect</h3>
-                </div>
-                <div className="section-content">
-                  <p>
-                    We collect information you provide directly to us, such as when you
-                    create an account, place an order, or communicate with us. This
-                    may include:
-                  </p>
-                  <div className="info-grid">
-                    <div className="info-card">
-                      <h4>Personal Information</h4>
-                      <ul>
-                        <li>Name and contact details</li>
-                        <li>Email address</li>
-                        <li>Phone number</li>
-                        <li>Profile preferences</li>
-                      </ul>
-                    </div>
-                    <div className="info-card">
-                      <h4>Transaction Data</h4>
-                      <ul>
-                        <li>Order history</li>
-                        <li>Payment information</li>
-                        <li>Billing addresses</li>
-                        <li>Purchase preferences</li>
-                      </ul>
-                    </div>
-                    <div className="info-card">
-                      <h4>Usage Data</h4>
-                      <ul>
-                        <li>Location data (if enabled)</li>
-                        <li>Device information</li>
-                        <li>App usage patterns</li>
-                        <li>Performance metrics</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section className="privacy-section">
-                <div className="section-header">
-                  <div className="section-number">2</div>
-                  <h3>How We Use Your Information</h3>
-                </div>
-                <div className="section-content">
-                  <p>We use the information we collect to enhance your experience:</p>
-                  <div className="usage-list">
-                    <div className="usage-item">
-                      <div className="usage-icon">🛍️</div>
-                      <div>
-                        <h4>Service Delivery</h4>
-                        <p>Provide, maintain, and improve our Services</p>
-                      </div>
-                    </div>
-                    <div className="usage-item">
-                      <div className="usage-icon">💳</div>
-                      <div>
-                        <h4>Order Processing</h4>
-                        <p>Process your orders and transactions securely</p>
-                      </div>
-                    </div>
-                    <div className="usage-item">
-                      <div className="usage-icon">📱</div>
-                      <div>
-                        <h4>Communication</h4>
-                        <p>Send updates about orders, services, and promotions</p>
-                      </div>
-                    </div>
-                    <div className="usage-item">
-                      <div className="usage-icon">⚡</div>
-                      <div>
-                        <h4>Personalization</h4>
-                        <p>Customize your experience and recommendations</p>
-                      </div>
-                    </div>
-                    <div className="usage-item">
-                      <div className="usage-icon">📊</div>
-                      <div>
-                        <h4>Analytics</h4>
-                        <p>Monitor trends and improve our platform</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section className="privacy-section">
-                <div className="section-header">
-                  <div className="section-number">3</div>
-                  <h3>Information Sharing</h3>
-                </div>
-                <div className="section-content">
-                  <p>We may share your information with trusted partners:</p>
-                  <div className="sharing-cards">
-                    <div className="sharing-card">
-                      <h4>Service Providers</h4>
-                      <p>Third-party vendors who help us deliver services (payment processing, delivery, customer support)</p>
-                    </div>
-                    <div className="sharing-card">
-                      <h4>Marketing Partners</h4>
-                      <p>With your explicit consent, we may share data for promotional purposes</p>
-                    </div>
-                    <div className="sharing-card">
-                      <h4>Legal Requirements</h4>
-                      <p>When required by law enforcement or government agencies</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section className="privacy-section security-section">
-                <div className="section-header">
-                  <div className="section-number">4</div>
-                  <h3>Data Security</h3>
-                  <FaLock className="security-icon" />
-                </div>
-                <div className="section-content">
-                  <div className="security-content">
-                    <p>
-                      We implement industry-standard security measures to protect your
-                      personal information from unauthorized access, use, or disclosure.
-                      Our security measures include:
-                    </p>
-                    <div className="security-features">
-                      <div className="security-feature">
-                        <span className="feature-badge">🔐</span>
-                        <span>End-to-end encryption</span>
-                      </div>
-                      <div className="security-feature">
-                        <span className="feature-badge">🛡️</span>
-                        <span>Secure data centers</span>
-                      </div>
-                      <div className="security-feature">
-                        <span className="feature-badge">🔍</span>
-                        <span>Regular security audits</span>
-                      </div>
-                      <div className="security-feature">
-                        <span className="feature-badge">⚠️</span>
-                        <span>Breach monitoring</span>
-                      </div>
-                    </div>
-                    <div className="security-note">
-                      <p><strong>Note:</strong> While we strive to protect your data, no method of transmission over the Internet is 100% secure.</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section className="privacy-section">
-                <div className="section-header">
-                  <div className="section-number">5</div>
-                  <h3>Your Rights & Choices</h3>
-                </div>
-                <div className="section-content">
-                  <p>You have control over your personal information:</p>
-                  <div className="rights-grid">
-                    <div className="right-item">
-                      <h4>Access & Correction</h4>
-                      <p>View and update your personal information anytime</p>
-                    </div>
-                    <div className="right-item">
-                      <h4>Marketing Opt-out</h4>
-                      <p>Unsubscribe from promotional communications</p>
-                    </div>
-                    <div className="right-item">
-                      <h4>Data Deletion</h4>
-                      <p>Request removal of your data (subject to legal obligations)</p>
-                    </div>
-                    <div className="right-item">
-                      <h4>Data Portability</h4>
-                      <p>Export your data in a readable format</p>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section className="privacy-section">
-                <div className="section-header">
-                  <div className="section-number">6</div>
-                  <h3>Policy Updates</h3>
-                </div>
-                <div className="section-content">
-                  <p>
-                    We may update this Privacy Policy from time to time to reflect
-                    changes in our practices or legal requirements. We will notify
-                    you of any significant changes by posting the updated policy
-                    on our Services and updating the "Last Updated" date.
-                  </p>
-                </div>
-              </section>
-
-              <section className="privacy-section contact-section">
-                <div className="section-header">
-                  <div className="section-number">7</div>
-                  <h3>Contact Us</h3>
-                </div>
-                <div className="section-content">
-                  <p>If you have any questions about this Privacy Policy, please reach out:</p>
-                  <div className="contact-info">
-                    <div className="contact-item">
-                      <FaEnvelope className="contact-icon" />
-                      <div>
-                        <h4>Email</h4>
-                        <p>privacy@goorder.com</p>
-                      </div>
-                    </div>
-                    <div className="contact-item">
-                      <FaPhone className="contact-icon" />
-                      <div>
-                        <h4>Phone</h4>
-                        <p>+1 987-654-3210</p>
-                      </div>
-                    </div>
-                    <div className="contact-item">
-                      <FaMapMarkerAlt className="contact-icon" />
-                      <div>
-                        <h4>Address</h4>
-                        <p>GoOrder Privacy Team<br />123 Main Street<br />City, Country</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-
-            <div className="privacy-footer">
-              <p><strong>Last Updated:</strong> January 2025</p>
-              <p>Thank you for trusting GoOrder with your information.</p>
+              <p>Legal agreement and service terms</p>
             </div>
           </div>
         </div>
-      </div>
-    </>
-  );
-};
+      </header>
 
-export default PrivacyPolicy;
+      {/* Main Content Area for Privacy Policy */}
+      <div className="terms-content">
+        {/* Hero Section: Introduction to GoOrder and terms */}
+        <section className="terms-hero">
+          <div className="hero-icon">
+            <FaHandshake />
+          </div>
+          <div className="hero-content">
+            <h2>Welcome to GoOrder</h2>
+            <p>
+              These Terms & Conditions govern your use of our mobile application and services. By accessing or using{" "}
+              <strong>GoOrder</strong>, you agree to be bound by these terms. Please read them carefully before using
+              our platform.
+            </p>
+            {/* Last updated information */}
+            <div className="last-updated">
+              <FaClock />
+              <span>Last Updated: January 2025</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Individual Sections for Terms and Conditions */}
+        <div className="terms-sections">
+          {/* Section 1: Acceptance of Terms */}
+          <section className="terms-section" id="acceptance">
+            <div className="section-header">
+              <div className="section-number">1</div>
+              <div className="section-title">
+                <h2>Acceptance of Terms</h2>
+                <FaUserCheck className="section-icon" />
+              </div>
+            </div>
+            <div className="section-content">
+              <p>
+                By downloading, installing, or using the GoOrder application, you acknowledge that you have read,
+                understood, and agree to be bound by these Terms & Conditions.
+              </p>
+              <div className="important-notice warning">
+                <div className="notice-icon">
+                  <FaExclamationTriangle />
+                </div>
+                <div className="notice-content">
+                  <p>
+                    <strong>Important:</strong> You must be at least 18 years old or have parental consent to use our
+                    services. If you do not agree to these terms, please discontinue use immediately.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 2: User Responsibilities */}
+          <section className="terms-section" id="user-responsibilities">
+            <div className="section-header">
+              <div className="section-number">2</div>
+              <div className="section-title">
+                <h2>User Responsibilities</h2>
+                <FaUserCheck className="section-icon" />
+              </div>
+            </div>
+            <div className="section-content">
+              <p>As a user of GoOrder, you agree to:</p>
+              <ul>
+                <li>Provide accurate and complete registration information</li>
+                <li>Maintain the confidentiality of your account credentials</li>
+                <li>Use the service only for lawful purposes and in compliance with these terms</li>
+                <li>Not engage in any fraudulent, harmful, or illegal activities</li>
+                <li>Not impersonate another person or misrepresent your identity</li>
+                <li>Respect the intellectual property rights of GoOrder and third parties</li>
+                <li>Report any suspicious activities or security breaches immediately</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section 3: Orders & Payments */}
+          <section className="terms-section" id="orders-payments">
+            <div className="section-header">
+              <div className="section-number">3</div>
+              <div className="section-title">
+                <h2>Orders & Payments</h2>
+                <FaShoppingCart className="section-icon" />
+              </div>
+            </div>
+            <div className="section-content">
+              <p>Our ordering and payment system operates under the following terms:</p>
+              <ul>
+                <li>All orders are subject to availability and restaurant acceptance</li>
+                <li>Prices displayed include applicable taxes and fees</li>
+                <li>Payment is required at the time of order placement</li>
+                <li>We reserve the right to refuse or cancel orders for any reason</li>
+                <li>Refunds are processed according to our refund policy</li>
+                <li>Payment information is securely processed through certified payment providers</li>
+                <li>You are responsible for any charges incurred on your account</li>
+              </ul>
+              <div className="important-notice info">
+                <div className="notice-icon">
+                  <FaInfoCircle />
+                </div>
+                <div className="notice-content">
+                  <p>
+                    <strong>Payment Security:</strong> We use industry-standard encryption to protect your payment
+                    information. However, you are responsible for keeping your payment methods secure.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 4: Delivery Service */}
+          <section className="terms-section" id="delivery-service">
+            <div className="section-header">
+              <div className="section-number">4</div>
+              <div className="section-title">
+                <h2>Delivery Service</h2>
+                <FaTruck className="section-icon" />
+              </div>
+            </div>
+            <div className="section-content">
+              <p>Our delivery service is subject to the following conditions:</p>
+              <ul>
+                <li>Delivery times are estimates and may vary due to various factors</li>
+                <li>We are not responsible for delays caused by restaurants, traffic, or weather</li>
+                <li>Accurate delivery information must be provided to avoid delays</li>
+                <li>Delivery personnel have the right to refuse delivery to unsafe locations</li>
+                <li>You must be available to receive your order at the specified location</li>
+                <li>Additional charges may apply for special delivery requests</li>
+                <li>Delivery areas are subject to availability and may change</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section 5: Privacy & Data Protection */}
+          <section className="terms-section" id="privacy-data">
+            <div className="section-header">
+              <div className="section-number">5</div>
+              <div className="section-title">
+                <h2>Privacy & Data Protection</h2>
+                <FaShieldAlt className="section-icon" />
+              </div>
+            </div>
+            <div className="section-content">
+              <p>
+                Your privacy is important to us. We collect, store, and process personal data as described in our
+                Privacy Policy, which forms an integral part of these Terms & Conditions.
+              </p>
+              <ul>
+                <li>We collect only necessary information to provide our services</li>
+                <li>Your data is protected using industry-standard security measures</li>
+                <li>We do not sell your personal information to third parties</li>
+                <li>You have the right to access, modify, or delete your personal data</li>
+                <li>We may share data with service providers necessary for order fulfillment</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section 6: Prohibited Conduct */}
+          <section className="terms-section" id="prohibited-conduct">
+            <div className="section-header">
+              <div className="section-number">6</div>
+              <div className="section-title">
+                <h2>Prohibited Conduct</h2>
+                <FaExclamationTriangle className="section-icon" />
+              </div>
+            </div>
+            <div className="section-content">
+              <p>The following activities are strictly prohibited:</p>
+              <ul>
+                <li>Attempting to hack, disrupt, or damage our systems</li>
+                <li>Using automated systems to access our services</li>
+                <li>Posting false reviews or manipulating ratings</li>
+                <li>Harassing or threatening restaurant staff or delivery personnel</li>
+                <li>Violating any applicable laws or regulations</li>
+                <li>Creating multiple accounts to circumvent restrictions</li>
+                <li>Sharing account credentials with unauthorized parties</li>
+              </ul>
+              <div className="important-notice warning">
+                <div className="notice-icon">
+                  <FaExclamationTriangle />
+                </div>
+                <div className="notice-content">
+                  <p>
+                    <strong>Violation Consequences:</strong> Violation of these terms may result in account
+                    suspension, termination, and potential legal action.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 7: Limitation of Liability */}
+          <section className="terms-section" id="liability-limitation">
+            <div className="section-header">
+              <div className="section-number">7</div>
+              <div className="section-title">
+                <h2>Limitation of Liability</h2>
+                <FaGavel className="section-icon" />
+              </div>
+            </div>
+            <div className="section-content">
+              <p>
+                GoOrder provides services "as is" and "as available" without warranties of any kind. Our liability is
+                limited as follows:
+              </p>
+              <ul>
+                <li>We are not liable for indirect, incidental, or consequential damages</li>
+                <li>Our total liability shall not exceed the amount paid for the specific service</li>
+                <li>We are not responsible for restaurant food quality or preparation</li>
+                <li>Force majeure events are beyond our control and responsibility</li>
+                <li>Third-party service failures are not our responsibility</li>
+                <li>User-generated content is not endorsed or verified by us</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section 8: Account Termination */}
+          <section className="terms-section" id="termination">
+            <div className="section-header">
+              <div className="section-number">8</div>
+              <div className="section-title">
+                <h2>Account Termination</h2>
+                <FaExclamationTriangle className="section-icon" />
+              </div>
+            </div>
+            <div className="section-content">
+              <p>Account termination may occur under the following circumstances:</p>
+              <ul>
+                <li>Violation of these Terms & Conditions</li>
+                <li>Fraudulent or illegal activities</li>
+                <li>Repeated complaints from restaurants or delivery partners</li>
+                <li>Abuse of refund or promotional systems</li>
+                <li>User request for account deletion</li>
+                <li>Extended period of account inactivity</li>
+              </ul>
+              <div className="important-notice warning">
+                <div className="notice-icon">
+                  <FaExclamationTriangle />
+                </div>
+                <div className="notice-content">
+                  <p>
+                    <strong>Termination Effects:</strong> Upon termination, you lose access to all account features,
+                    order history, and accumulated benefits. Outstanding orders will be completed where possible.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 9: Changes to Terms */}
+          <section className="terms-section" id="changes-updates">
+            <div className="section-header">
+              <div className="section-number">9</div>
+              <div className="section-title">
+                <h2>Changes to Terms</h2>
+                <FaEdit className="section-icon" />
+              </div>
+            </div>
+            <div className="section-content">
+              <p>
+                We reserve the right to modify these Terms & Conditions at any time. Changes will be effective
+                immediately upon posting to our platform.
+              </p>
+              <ul>
+                <li>Users will be notified of significant changes via email or app notification</li>
+                <li>Continued use of the service constitutes acceptance of updated terms</li>
+                <li>Previous versions of terms will be archived for reference</li>
+                <li>Users may terminate their account if they disagree with changes</li>
+              </ul>
+            </div>
+          </section>
+        </div>
+
+        {/* Contact Section for Terms & Conditions Inquiries */}
+        <section className="contact-section">
+          <h3>Questions About These Terms?</h3>
+          <p>If you have any questions about these Terms & Conditions, please contact us:</p>
+          <div className="contact-grid">
+            <div className="contact-item">
+              <FaEnvelope className="contact-icon" />
+              <div className="contact-content">
+                <h4>Email Support</h4>
+                <p>legal@goorder.com</p>
+                <span className="contact-note">Response within 24 hours</span>
+              </div>
+            </div>
+            <div className="contact-item">
+              <FaPhone className="contact-icon" />
+              <div className="contact-content">
+                <h4>Phone Support</h4>
+                <p>+1 987-654-3210</p>
+                <span className="contact-note">Mon-Fri, 9AM-6PM EST</span>
+              </div>
+            </div>
+            <div className="contact-item">
+              <FaMapMarkerAlt className="contact-icon" />
+              <div className="contact-content">
+                <h4>Legal Department</h4>
+                <p>
+                  GoOrder Legal Team
+                  <br />
+                  123 Main Street
+                  <br />
+                  City, Country
+                </p>
+                <span className="contact-note">For legal correspondence</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer Section for Terms & Conditions */}
+        <footer className="terms-footer">
+          <div className="footer-content">
+            <div className="footer-main">
+              <h3>Agreement Acknowledgment</h3>
+              <p>
+                By using GoOrder, you acknowledge that you have read, understood, and agree to be bound by these Terms
+                & Conditions. Thank you for choosing our platform for your food delivery needs.
+              </p>
+            </div>
+            <div className="footer-meta">
+              <div className="footer-item">
+                <strong>Last Updated:</strong> January 2025
+              </div>
+              <div className="footer-item">
+                <strong>Version:</strong> 3.1
+              </div>
+              <div className="footer-item">
+                <strong>Effective Date:</strong> January 1, 2025
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  )
+}
+
+export default privacypolicy

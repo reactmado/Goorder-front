@@ -1,105 +1,106 @@
-/* File: src/components/Sidebar_2/Sidebar_2.css */
-
 /* Variables for consistent theming */
 :root {
   --sidebar-width-desktop: 240px;
   --sidebar-width-tablet: 200px;
   --sidebar-width-mobile: 280px;
-  --navbar-height: 60px; /* Assuming your navbar has a height of 60px */
+  --navbar-height: 60px;
 
   --primary-purple: #8a5bc6;
   --light-purple: #b794d4;
   --background-light: #eff0f4;
-  --background-lighter: #fdfdff; /* New: for subtle gradient top */
+  --background-lighter: #fdfdff;
   --text-dark: #2d3748;
   --text-medium: #4a5568;
   --text-light: #718096;
   --border-color: #e2e8f0;
-  --shadow-light: rgba(0, 0, 0, 0.08); /* Adjusted for more subtlety */
+  --shadow-light: rgba(0, 0, 0, 0.08);
   --shadow-medium: rgba(0, 0, 0, 0.15);
   --shadow-strong: rgba(0, 0, 0, 0.3);
 
   --transition-duration: 0.3s;
-  --transition-timing-function: cubic-bezier(
-    0.4,
-    0,
-    0.2,
-    1
-  ); /* Standard ease-out for smoothness */
+  --transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Base styles for smooth transitions across all elements */
+/* Base styles for smooth transitions */
 * {
-  transition: color var(--transition-duration) var(--transition-timing-function),
-    background-color var(--transition-duration)
-      var(--transition-timing-function),
+  transition:
+    color var(--transition-duration) var(--transition-timing-function),
+    background-color var(--transition-duration) var(--transition-timing-function),
     transform var(--transition-duration) var(--transition-timing-function),
     box-shadow var(--transition-duration) var(--transition-timing-function),
     border-color var(--transition-duration) var(--transition-timing-function),
-    opacity var(--transition-duration) var(--transition-timing-function);
+    opacity var(--transition-duration) var(--transition-timing-function),
+    filter var(--transition-duration) var(--transition-timing-function); /* Add filter here */
 }
 
-/* Container for the entire sidebar */
+/* FIXED SIDEBAR POSITIONING - NO GAPS */
 .sidebar_2 {
   width: var(--sidebar-width-desktop);
   height: calc(100vh - var(--navbar-height));
-  background: linear-gradient(
-    180deg,
-    var(--background-lighter),
-    var(--background-light)
-  );
+  background: linear-gradient(180deg, var(--background-lighter), var(--background-light));
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   font-family: "Arial", sans-serif;
-  box-shadow: 0 2px 4px var(--shadow-light);
-  position: fixed;
-  left: 0;
-  top: var(--navbar-height);
-  z-index: 900;
-  /* Enhanced transition for initial sidebar open/close (desktop, if dynamic) */
-  transition: width var(--transition-duration) var(--transition-timing-function),
-    transform 0.5s var(--transition-timing-function),
-    /* Slower for mobile slide */ box-shadow var(--transition-duration)
-      var(--transition-timing-function);
+  box-shadow: 2px 0 10px var(--shadow-light);
+  position: fixed !important;
+  left: 0 !important;
+  top: var(--navbar-height) !important;
+  z-index: 950 !important; /* Sidebar behind Navbar but above content */
+  transition: transform var(--transition-duration) var(--transition-timing-function),
+              filter var(--transition-duration) var(--transition-timing-function),
+              pointer-events var(--transition-duration) var(--transition-timing-function); /* Add filter and pointer-events */
+  padding-top: 0;
+  margin-top: 0;
+
+  /* HIDE SCROLLBAR COMPLETELY */
   overflow-y: auto;
-  padding-top: 0; /* Ensures no gap at the top */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
 
-/* Main content adjustment to account for fixed sidebar */
-.main-content {
-  margin-left: var(--sidebar-width-desktop);
-  transition: margin-left var(--transition-duration)
-    var(--transition-timing-function);
-  padding-top: var(--navbar-height);
+/* CRITICAL: Blur sidebar when modal is open */
+.sidebar_2.modal-open {
+  filter: blur(3px) !important;
+  pointer-events: none !important; /* Disable interaction with blurred elements */
+  transform: scale(0.98) translateX(var(--sidebar-width-desktop)) !important; /* Shift when open, then blur/scale */
+  /* Re-adjust transform to prevent visible shift if already collapsed, or to ensure it stays fixed */
 }
 
-/* Top portion of the sidebar (menu items) */
+/* Adjust transform for collapsed sidebar when modal is open */
+.sidebar_2.collapsed.modal-open {
+  transform: translateX(-100%) scale(0.98) !important; /* Keep it collapsed and blurred */
+}
+
+
+/* Hide scrollbar for WebKit browsers */
+.sidebar_2::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  background: transparent;
+}
+
+/* Sidebar collapsed state */
+.sidebar_2.collapsed {
+  transform: translateX(-100%);
+}
+
+/* Top portion of the sidebar */
 .sidebar_2-top {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 10px 0;
-  scrollbar-width: thin;
-  scrollbar-color: var(--primary-purple) transparent;
+  padding: 16px 0;
+
+  /* HIDE SCROLLBAR HERE TOO */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-/* Custom scrollbar styling */
 .sidebar_2-top::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sidebar_2-top::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    135deg,
-    var(--primary-purple),
-    var(--light-purple)
-  );
-  border-radius: 10px;
-}
-
-.sidebar_2-top::-webkit-scrollbar-track {
-  background-color: transparent;
+  display: none;
+  width: 0;
+  background: transparent;
 }
 
 /* Menu list styling */
@@ -109,25 +110,31 @@
   padding: 0;
 }
 
-/* Each menu item */
+/* Enhanced menu items */
 .sidebar_2-menu li {
-  margin: 2px 10px;
-  border-radius: 10px;
+  margin: 3px 12px;
+  border-radius: 12px;
   overflow: hidden;
   position: relative;
-  /* No direct transition here, let link/active handle it */
+  transition: all 0.3s var(--transition-timing-function);
 }
 
-/* Active state for menu items */
+/* Active state with enhanced animation */
 .sidebar_2-menu li.active {
-  background: linear-gradient(
-    135deg,
-    rgba(138, 91, 198, 0.15),
-    rgba(183, 148, 212, 0.1)
-  );
-  box-shadow: 0 2px 8px rgba(138, 91, 198, 0.2);
-  /* Animation on active state */
-  animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(135deg, rgba(138, 91, 198, 0.15), rgba(183, 148, 212, 0.1));
+  box-shadow: 0 4px 12px rgba(138, 91, 198, 0.25);
+  transform: translateX(4px);
+  animation: activeGlow 2s infinite ease-in-out;
+}
+
+@keyframes activeGlow {
+  0%,
+  100% {
+    box-shadow: 0 4px 12px rgba(138, 91, 198, 0.25);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(138, 91, 198, 0.4);
+  }
 }
 
 .sidebar_2-menu li.active::before {
@@ -136,89 +143,103 @@
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  height: 80%;
+  height: 70%;
   width: 4px;
-  background: linear-gradient(
-    135deg,
-    var(--primary-purple),
-    var(--light-purple)
-  );
+  background: linear-gradient(135deg, var(--primary-purple), var(--light-purple));
   border-radius: 0 4px 4px 0;
-  /* Subtle animation on entry/exit of active state */
-  transition: all var(--transition-duration) var(--transition-timing-function);
+  animation: slideInLeft 0.3s ease-out;
 }
 
-/* Menu links */
+@keyframes slideInLeft {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 4px;
+    opacity: 1;
+  }
+}
+
+/* Enhanced menu links */
 .sidebar_2-menu li a {
   display: flex;
   align-items: center;
   color: var(--text-medium);
   text-decoration: none;
-  padding: 12px 18px;
+  padding: 14px 20px;
   font-size: 15px;
   font-weight: 500;
-  border-radius: 10px;
+  border-radius: 12px;
   position: relative;
   overflow: hidden;
-  /* Enhanced hover/focus transition for links */
-  transition: all 0.3s var(--transition-timing-function),
-    transform 0.2s ease-out;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Hover effect on menu items */
+/* Enhanced hover effects */
 .sidebar_2-menu li a:hover {
-  background: rgba(138, 91, 198, 0.08);
+  background: rgba(138, 91, 198, 0.1);
   color: var(--primary-purple);
-  transform: translateX(4px); /* Slightly more pronounced slide */
-  box-shadow: 0 4px 15px rgba(138, 91, 198, 0.15); /* Deeper shadow on hover */
+  transform: translateX(6px);
+  box-shadow: 0 4px 15px rgba(138, 91, 198, 0.2);
+}
+
+.sidebar_2-menu li a::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(138, 91, 198, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.sidebar_2-menu li a:hover::before {
+  left: 100%;
 }
 
 /* Active link styling */
 .sidebar_2-menu li.active a {
   color: var(--primary-purple);
   font-weight: 600;
-  transform: translateX(0); /* Ensure active item doesn't have transform */
+  transform: translateX(0);
 }
 
-/* Icons next to text - FIXED TO INHERIT COLOR FROM PARENT */
+/* Enhanced icons */
 .sidebar_2-icon {
-  margin-right: 12px;
-  font-size: 17px;
-  color: inherit !important; /* Force inherit color from parent link */
-  min-width: 17px;
-  /* Animation for icon on hover/active */
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bounce effect */
+  margin-right: 14px;
+  font-size: 18px;
+  color: inherit !important;
+  min-width: 18px;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-/* Change icon color on hover or active link - SIMPLIFIED */
 .sidebar_2-menu li a:hover .sidebar_2-icon,
 .sidebar_2-menu li.active .sidebar_2-icon {
-  color: inherit !important; /* Ensure it inherits the link's color */
-  transform: scale(1.15) rotate(5deg); /* Slightly larger scale and rotation */
+  color: inherit !important;
+  transform: scale(1.2) rotate(10deg);
 }
 
-/* Orders item with a submenu */
+/* Enhanced orders section */
 .sidebar_2-orders {
   cursor: pointer;
-  margin: 2px 10px;
-  border-radius: 10px;
-  position: relative; /* For the active state marker if needed */
-  transition: background var(--transition-duration)
-      var(--transition-timing-function),
-    transform 0.2s ease-out;
+  margin: 3px 12px;
+  border-radius: 12px;
+  position: relative;
+  transition: all 0.3s var(--transition-timing-function);
 }
 
 .sidebar_2-orders:hover {
-  background: rgba(138, 91, 198, 0.08);
-  transform: translateX(2px);
+  background: rgba(138, 91, 198, 0.1);
+  transform: translateX(4px);
 }
 
-/* Orders title row: icon, text, and chevron */
 .sidebar_2-orders-title {
   display: flex;
   align-items: center;
   color: var(--text-medium);
-  padding: 12px 18px;
+  padding: 14px 20px;
   font-size: 15px;
   font-weight: 500;
   transition: color var(--transition-duration) var(--transition-timing-function);
@@ -228,38 +249,35 @@
   color: var(--primary-purple);
 }
 
-/* Chevron arrow icon on the right */
+/* Enhanced chevron */
 .sidebar_2-chevron-icon {
   margin-left: auto;
-  color: inherit !important; /* Inherit from parent */
-  font-size: 13px;
-  transition: transform var(--transition-duration)
-      var(--transition-timing-function),
-    color var(--transition-duration) var(--transition-timing-function);
+  color: inherit !important;
+  font-size: 14px;
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .sidebar_2-orders:hover .sidebar_2-chevron-icon {
-  color: inherit !important; /* Inherit from parent */
-  transform: scale(1.1) rotate(90deg); /* Rotate for open/close indication */
-}
-.sidebar_2-orders.orders-open .sidebar_2-chevron-icon {
-  transform: rotate(180deg); /* Consistent rotation when opened */
+  transform: scale(1.2) rotate(90deg);
 }
 
-/* Submenu for Orders */
+.sidebar_2-orders.orders-open .sidebar_2-chevron-icon {
+  transform: rotate(180deg);
+}
+
+/* Enhanced submenu */
 .sidebar_2-orders-submenu {
   list-style: none;
   margin: 0;
-  padding: 0 0 6px 0;
-  background: rgba(138, 91, 198, 0.03);
-  border-radius: 0 0 10px 10px;
-  /* Enhanced reveal animation */
-  animation: slideInFromTop 0.3s ease-out forwards;
-  overflow: hidden; /* Important for animation to work with max-height */
+  padding: 0 0 8px 0;
+  background: rgba(138, 91, 198, 0.05);
+  border-radius: 0 0 12px 12px;
+  animation: slideDownFade 0.4s ease-out forwards;
+  overflow: hidden;
   transform-origin: top;
 }
 
-@keyframes slideInFromTop {
+@keyframes slideDownFade {
   from {
     opacity: 0;
     max-height: 0;
@@ -267,43 +285,35 @@
   }
   to {
     opacity: 1;
-    max-height: 200px; /* Needs to be larger than actual content height */
+    max-height: 200px;
     transform: translateY(0);
   }
 }
 
-/* Submenu items */
 .sidebar_2-orders-submenu li {
-  margin: 1px 12px;
-  border-radius: 8px;
+  margin: 2px 16px;
+  border-radius: 10px;
 }
 
 .sidebar_2-orders-submenu li.active {
-  background: linear-gradient(
-    135deg,
-    var(--primary-purple),
-    var(--light-purple)
-  );
-  box-shadow: 0 2px 6px rgba(138, 91, 198, 0.2);
+  background: linear-gradient(135deg, var(--primary-purple), var(--light-purple));
+  box-shadow: 0 3px 8px rgba(138, 91, 198, 0.3);
 }
 
-/* Submenu links */
 .sidebar_2-orders-submenu li a {
   color: var(--text-medium);
   font-size: 14px;
   font-weight: 500;
-  padding: 8px 20px;
-  border-radius: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
   display: block;
-  /* Enhanced hover for submenu links */
-  transition: all 0.3s var(--transition-timing-function),
-    transform 0.1s ease-out;
+  transition: all 0.3s var(--transition-timing-function);
 }
 
 .sidebar_2-orders-submenu li a:hover {
   color: var(--primary-purple);
-  background: rgba(138, 91, 198, 0.1); /* Slightly more prominent hover */
-  transform: translateX(4px) scale(1.01); /* Subtle slide and scale */
+  background: rgba(138, 91, 198, 0.12);
+  transform: translateX(6px) scale(1.02);
 }
 
 .sidebar_2-orders-submenu li.active a {
@@ -311,47 +321,44 @@
   font-weight: 600;
 }
 
-/* Bottom portion: user info */
+/* Enhanced bottom section */
 .sidebar_2-bottom {
-  padding: 16px;
+  padding: 20px 16px;
   border-top: 1px solid var(--border-color);
   display: flex;
   align-items: center;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.95),
-    /* Slightly more opaque background */ rgba(248, 249, 250, 0.98)
-  );
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.98));
   backdrop-filter: blur(10px);
-  margin: 0 10px 10px;
-  border-radius: 14px;
-  box-shadow: 0 3px 10px var(--shadow-light);
-  /* Enhanced hover for bottom user info */
-  transition: all 0.3s var(--transition-timing-function);
+  margin: 0 12px 12px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px var(--shadow-light);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
 }
 
 .sidebar_2-bottom:hover {
-  transform: translateY(-3px); /* More pronounced lift */
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); /* Stronger shadow on hover */
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(138, 91, 198, 0.15);
 }
 
-/* User avatar */
+/* Enhanced avatar */
 .sidebar_2-avatar {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 10px;
-  border: 2px solid rgba(138, 91, 198, 0.2);
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Bounce effect */
+  margin-right: 12px;
+  border: 3px solid rgba(138, 91, 198, 0.2);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .sidebar_2-bottom:hover .sidebar_2-avatar {
   border-color: var(--primary-purple);
-  transform: scale(1.08) rotate(-5deg); /* Bounce and slight rotation */
+  transform: scale(1.1) rotate(-8deg);
+  box-shadow: 0 4px 12px rgba(138, 91, 198, 0.3);
 }
 
-/* User name and email container */
+/* User info */
 .sidebar_2-user-info {
   display: flex;
   flex-direction: column;
@@ -359,43 +366,40 @@
   flex: 1;
 }
 
-/* User name styling */
 .sidebar_2-user-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-dark);
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  margin-bottom: 2px;
 }
 
-/* User email styling */
 .sidebar_2-user-email {
-  font-size: 11px;
+  font-size: 12px;
   color: black;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
 }
 
-/* Loading state for user info (shimmer) */
+/* Loading shimmer effect */
 .sidebar_2-user-info.loading-shimmer .sidebar_2-user-name,
 .sidebar_2-user-info.loading-shimmer .sidebar_2-user-email {
   background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%);
   background-size: 1000px 100%;
   animation: shimmer-text 1.5s infinite linear;
-  color: transparent; /* Hide text, show shimmer */
+  color: transparent;
   border-radius: 4px;
-  height: 14px; /* Approximate height for shimmering line */
+  height: 14px;
   margin-bottom: 4px;
-  width: 80%; /* Adjust width for shimmer */
+  width: 80%;
 }
+
 .sidebar_2-user-info.loading-shimmer .sidebar_2-user-email {
   width: 60%;
   height: 12px;
-}
-.sidebar_2-user-info.loading-shimmer .sidebar_2-user-email:last-child {
-  margin-bottom: 0;
 }
 
 @keyframes shimmer-text {
@@ -407,110 +411,67 @@
   }
 }
 
-/* Mobile menu toggle button */
-.sidebar_2-toggle {
-  display: none; /* Hidden on desktop */
-  position: fixed;
-  top: 15px;
-  left: 20px;
-  z-index: 1001;
-  background: #f8f9fa;
-  color: #495057;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  padding: 10px 12px;
-  cursor: pointer;
-  font-size: 18px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
-  min-width: 44px;
-  min-height: 44px;
-  align-items: center;
-  justify-content: center;
-}
+/* RESPONSIVE LAYOUT SYSTEM */
 
-.sidebar_2-toggle:hover {
-  background: #e9ecef;
-  border-color: #ced4da;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-}
-
-.sidebar_2-toggle:active {
-  transform: translateY(0);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar_2-toggle:focus {
-  outline: none;
-  border-color: var(--primary-purple);
-  box-shadow: 0 0 0 3px rgba(138, 91, 198, 0.1);
-}
-
-/* Mobile responsiveness */
-@media (max-width: 992px) {
+/* Desktop: Sidebar always visible */
+@media (min-width: 1024px) {
   .sidebar_2 {
-    width: var(--sidebar-width-tablet);
+    transform: translateX(0);
   }
 
-  .main-content {
-    margin-left: var(--sidebar-width-tablet);
+  .sidebar_2.collapsed {
+    transform: translateX(-100%);
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar_2 {
+    width: var(--sidebar-width-tablet);
+    transform: translateX(-100%); /* Start hidden by default */
+  }
+
+  .sidebar_2.mobile-open {
+    transform: translateX(0); /* Slide in when open */
+    box-shadow: 4px 0 15px var(--shadow-medium);
+    z-index: 1050 !important; /* Higher z-index when open on tablet/mobile to overlay content */
   }
 
   .sidebar_2-menu li {
-    margin: 2px 8px;
+    margin: 2px 10px;
   }
 
   .sidebar_2-menu li a {
-    padding: 10px 14px;
+    padding: 12px 16px;
     font-size: 14px;
   }
 
   .sidebar_2-icon {
-    margin-right: 10px;
+    margin-right: 12px;
     font-size: 16px;
     min-width: 16px;
   }
-
-  .sidebar_2-orders-submenu li a {
-    padding: 7px 18px;
-    font-size: 13px;
-  }
 }
 
-@media (max-width: 768px) {
+/* Mobile */
+@media (max-width: 767px) {
   .sidebar_2 {
     width: var(--sidebar-width-mobile);
     transform: translateX(-100%);
-    background: linear-gradient(
-      180deg,
-      var(--background-lighter),
-      var(--background-light)
-    );
-    border-right: 1px solid var(--border-color);
-    box-shadow: 0 4px 8px var(--shadow-medium);
     height: 100vh;
-    top: 0;
-    padding-top: max(
-      var(--navbar-height),
-      env(safe-area-inset-top) + var(--navbar-height)
-    );
+    top: 0; /* Align to top of viewport on mobile */
+    padding-top: var(--navbar-height); /* Push content below Navbar */
+    box-shadow: 4px 0 15px var(--shadow-medium);
+    z-index: 1000; /* Higher z-index for mobile overlay */
   }
 
   .sidebar_2.mobile-open {
     transform: translateX(0);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 6px 0 20px rgba(0, 0, 0, 0.25);
+    z-index: 1050 !important; /* Ensure it's above content and primary Navbar when open */
   }
 
-  .main-content {
-    margin-left: 0;
-  }
-
-  .sidebar_2-toggle {
-    display: flex; /* Show toggle button on mobile */
-  }
-
-  /* Add overlay when menu is open */
+  /* Mobile overlay */
   .sidebar_2-overlay {
     display: none;
     position: fixed;
@@ -519,8 +480,8 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.6);
-    z-index: 899;
-    backdrop-filter: blur(3px);
+    z-index: 999; /* Below sidebar, above page content */
+    backdrop-filter: blur(4px);
     animation: fadeIn 0.3s ease-out;
   }
 
@@ -539,104 +500,32 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 14px;
+    padding: 16px;
   }
 
   .sidebar_2-avatar {
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     margin-right: 0;
   }
 
   .sidebar_2-user-name {
-    font-size: 12px;
+    font-size: 13px;
   }
+
   .sidebar_2-user-email {
-    font-size: 10px;
+    font-size: 11px;
   }
-}
-
-/* Safe area insets for iOS devices */
-@supports (padding: max(0px)) {
-  .sidebar_2 {
-    height: calc(100vh - var(--navbar-height) - env(safe-area-inset-bottom));
-    top: calc(var(--navbar-height) + env(safe-area-inset-top));
-  }
-  @media (max-width: 768px) {
-    .sidebar_2 {
-      height: calc(100vh - env(safe-area-inset-bottom));
-      padding-top: env(safe-area-inset-top);
-      top: 0;
-    }
-  }
-}
-
-/* Pulse animation for active items */
-@keyframes pulse {
-  0% {
-    box-shadow: 0 2px 8px rgba(138, 91, 198, 0.2);
-  }
-  50% {
-    box-shadow: 0 6px 20px rgba(138, 91, 198, 0.4); /* Stronger, wider pulse */
-  }
-  100% {
-    box-shadow: 0 2px 8px rgba(138, 91, 198, 0.2);
-  }
-}
-
-/* Loading animation for menu items - Adjusted for subtlety */
-@keyframes shimmer {
-  0% {
-    background-position: -200px 0;
-  }
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
-}
-
-.sidebar_2-menu li a::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(138, 91, 198, 0.05),
-    transparent
-  );
-  background-size: 200px 100%;
-  animation: shimmer 2s infinite;
-  opacity: 0;
-  z-index: 1;
-  border-radius: 10px; /* Match link border-radius */
-}
-
-.sidebar_2-menu li a:hover::before {
-  opacity: 1;
-}
-
-/* Text inside links should be above shimmer */
-.sidebar_2-menu li a span,
-.sidebar_2-menu li a .sidebar_2-icon {
-  position: relative;
-  z-index: 2;
 }
 
 /* Enhanced focus states for accessibility */
 .sidebar_2-menu li a:focus-visible,
-.sidebar_2-orders-title:focus-visible,
-.logout-cancel-btn:focus-visible,
-.logout-confirm-btn:focus-visible,
-.sidebar_2-toggle:focus-visible {
-  outline: 3px solid var(--primary-purple); /* Thicker outline */
-  outline-offset: 4px; /* Larger offset */
-  border-radius: 12px; /* Smoother border-radius for outline */
+.sidebar_2-orders-title:focus-visible {
+  outline: 3px solid var(--primary-purple);
+  outline-offset: 4px;
+  border-radius: 12px;
 }
 
-/* ==== LOGOUT MODAL STYLES (FROM SIDEBAR.CSS) ==== */
-/* Animations (re-added to avoid conflicts and ensure modal specific animations) */
+/* Logout modal styles (from original Sidebar_2.css) */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -664,7 +553,7 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
-  z-index: 1300; /* Higher z-index to ensure it's on top of everything */
+  z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -712,7 +601,7 @@
   color: white;
   font-size: 24px;
   box-shadow: 0 8px 24px rgba(138, 91, 198, 0.3);
-  margin: 0 auto; /* Center the icon */
+  margin: 0 auto;
 }
 
 .close-modal {
